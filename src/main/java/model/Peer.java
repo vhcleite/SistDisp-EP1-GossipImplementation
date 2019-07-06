@@ -6,8 +6,9 @@ public class Peer {
     
     Address address;
     
-    public Peer() {
+    public Peer(Address address) {
         super();
+        this.address = address;
     }
 
     public Metadata getMetadata() {
@@ -24,7 +25,5 @@ public class Peer {
 
     public void setAddress(Address address) {
         this.address = address;
-    }
-
-    
+    }    
 }

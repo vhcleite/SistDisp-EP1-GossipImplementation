@@ -6,9 +6,10 @@ public class Peer {
     
     Address address;
     
-    public Peer(Address address) {
+    public Peer(String ip, int port) {
         super();
-        this.address = address;
+        this.address = new Address(ip, port);
+        this.metadata = null;
     }
 
     public Metadata getMetadata() {

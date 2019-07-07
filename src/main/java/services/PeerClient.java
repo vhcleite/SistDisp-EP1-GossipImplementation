@@ -63,6 +63,8 @@ public class PeerClient {
         PeerClient client = new PeerClient();
         initPeerRecords(client);
 
+        // Para thread funcionar é esperado que exista a pasta gossip_test_folder na
+        // home do usuario
         MetaDataBuilderThread builderThread = new MetaDataBuilderThread(client.iPeer);
         builderThread.start();
     }

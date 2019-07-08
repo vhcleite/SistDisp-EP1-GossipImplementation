@@ -4,7 +4,7 @@ public class Address {
 
     private String ip;
     private int port;
-    
+
     public Address(String ip, int port) {
         this.ip = ip;
         this.port = port;
@@ -30,4 +30,10 @@ public class Address {
         return String.format("%s:%d", ip, port);
     }
 
+    public boolean equals(Address address) {
+        if (this.ip.equals(address.getIp()) && (this.port == address.getPort())) {
+            return true;
+        }
+        return false;
+    }
 }

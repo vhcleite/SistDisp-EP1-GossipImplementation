@@ -1,62 +1,52 @@
 package services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import model.Address;
 import model.Peer;
 import model.PeerRecord;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class NeighborsMetaDataSenderThread extends Thread {
 
     private final static int TIMEOUT = 3000;
     private List<PeerRecord> peerRecords;
-    private List<Address> peersAddresses;
+    private List<Address> peerAddresses;
     private Peer iPeer;
 
-    public NeighborsMetaDataSenderThread(Peer iPeer,ArrayList<PeerRecord> peerRecords, List<Address> peersAddresses) {
+    MessageHandler messageHandler = new MessageHandler();
+    MetadataSenderService metadataSenderService = new MetadataSenderService(iPeer);
+
+    public NeighborsMetaDataSenderThread(Peer iPeer, ArrayList<PeerRecord> peerRecords, List<Address> peersAddresses) {
         this.peerRecords = peerRecords;
-        this.peersAddresses = peersAddresses;
+        this.peerAddresses = peersAddresses;
         this.iPeer = iPeer;
     }
 
     @Override
     public void run() {
         while (true) {
-            boolean isSamePeer = true;
+
+            Address addressToSend = null;
             PeerRecord recordToSend = null;
-            Address peerToSend = null;
 
-            while (isSamePeer) {
-                //sorteia um peer para enviar
-                int peerToSendIndex = LotteryPeerService.chooseRandomPeerIndex(peersAddresses.size());
-                peerToSend = peersAddresses.get(peerToSendIndex);
+            do {
+                // sorteia um peer para enviar metadados
+                addressToSend = peerAddresses.get(LotteryService.getRandomInt(peerAddresses.size()));
 
-                //sorteia um peer para pegar os metadados
-                int recordToSendIndex = LotteryPeerService.chooseRandomPeerIndex(peerRecords.size());
-                recordToSend = peerRecords.get(recordToSendIndex);
+                // sorteia um peer para pegar os metadados
+                recordToSend = peerRecords.get(LotteryService.getRandomInt(peerRecords.size()));
+            } while (addressToSend.equals(recordToSend.getPeer().getAddress()));
 
-                // verifica se não são os mesmos peers
-                isSamePeer = isSamePeer(peerToSend, recordToSend);
-            }
-
-            // cria json
-            MessageHandler messageHandler = new MessageHandler();
-            String jsonPeer = messageHandler.stringfyPeer(recordToSend.getPeer());
-
-            //enviar os metadados
-            MetadataSenderService metadataSenderService = new MetadataSenderService(iPeer);
             try {
-                metadataSenderService.sendMessage(jsonPeer, peerToSend);
+                metadataSenderService.sendMessage(//
+                        messageHandler.stringfyPeer(recordToSend.getPeer()), addressToSend);
+
                 Thread.sleep(TIMEOUT);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
-    }
-
-    private boolean isSamePeer(Address peerToSend, PeerRecord recordToSend) {
-        return recordToSend.getPeer().getAddress().getPort() == peerToSend.getPort();
     }
 }

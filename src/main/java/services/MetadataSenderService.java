@@ -1,10 +1,12 @@
 package services;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
 import model.Address;
 import model.Peer;
-
-import java.io.IOException;
-import java.net.*;
 
 public class MetadataSenderService {
 
@@ -21,13 +23,11 @@ public class MetadataSenderService {
 
             byte[] jsonBytes = json.getBytes();
 
-            DatagramPacket datagramPacket = new DatagramPacket(jsonBytes,
-                    jsonBytes.length,
-                    targetAddress,
-                    targetPeerAddress.getPort());
+            DatagramPacket datagramPacket = new DatagramPacket(//
+                    jsonBytes, jsonBytes.length, targetAddress, targetPeerAddress.getPort());
 
             sendSocket.send(datagramPacket);
-        } catch (IOException e){
+        } catch (IOException e) {
             Thread.sleep(10);
             sendMessage(json, targetPeerAddress);
         }

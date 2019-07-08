@@ -1,15 +1,14 @@
 package services;
 
-import model.PeerRecord;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
+
+import model.PeerRecord;
 
 public class MetaDataVerifierThread extends Thread {
 
     private static final int THREAD_TIMEOUT = 3000;
-    private static final int METADA_TIMEOUT = 5000;
+    private static final int METADATA_EXPIRATION_TIME = 5000;
 
     private ArrayList<PeerRecord> peerRecords = new ArrayList<PeerRecord>();
 
@@ -21,17 +20,15 @@ public class MetaDataVerifierThread extends Thread {
     public void run() {
         while (true) {
             try {
-                Date currentDate = new Date();
-
                 Iterator<PeerRecord> iterator = peerRecords.iterator();
                 while (iterator.hasNext()) {
                     PeerRecord peerRecord = iterator.next();
 
-                    boolean isValidRecord = peerRecord.isValid(currentDate, METADA_TIMEOUT);
-                    // se nao eh valido remove o registro
-                    if (!isValidRecord) {
+                    if (peerRecord.isExpired(METADATA_EXPIRATION_TIME)) {
+                        // se nao eh valido remove o registro
                         iterator.remove();
                     }
+
                 }
                 Thread.sleep(THREAD_TIMEOUT);
             } catch (InterruptedException e) {

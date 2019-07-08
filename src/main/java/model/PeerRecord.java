@@ -12,7 +12,7 @@ public class PeerRecord {
         peer = new Peer(ip, port);
         receivingDate = null;
     }
-    
+
     public Peer getPeer() {
         return peer;
     }
@@ -29,8 +29,11 @@ public class PeerRecord {
         this.receivingDate = receivingDate;
     }
 
-    public boolean isValid(Date currentDate, int expirationTime){
-        long difference = currentDate.getTime() - this.receivingDate.getTime();
+    public boolean isExpired(int expirationTime) {
+
+        Date now = new Date();
+
+        long difference = now.getTime() - this.receivingDate.getTime();
         return difference > expirationTime;
     }
 

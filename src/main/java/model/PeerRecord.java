@@ -29,4 +29,9 @@ public class PeerRecord {
         this.receivingDate = receivingDate;
     }
 
+    public boolean isValid(Date currentDate, int expirationTime){
+        long difference = currentDate.getTime() - this.receivingDate.getTime();
+        return difference > expirationTime;
+    }
+
 }

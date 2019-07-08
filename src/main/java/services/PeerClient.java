@@ -1,8 +1,11 @@
 package services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
+import model.Address;
 import model.Peer;
 import model.PeerRecord;
 
@@ -10,8 +13,11 @@ public class PeerClient {
 
     public static final int MY_PORT = 9000;
 
-    public static final int[] PEER_PORTS = { 9000, 9001, 9002, 9003, 9004 };
-
+    public static final List<Address> PEERS_ADDRESSES = Arrays.asList(new Address("127.0.0.1", 9000),
+                                                                 new Address("127.0.0.1", 9001),
+                                                                 new Address("127.0.0.1", 9002),
+                                                                 new Address("127.0.0.1", 9003),
+                                                                 new Address("127.0.0.1", 9002));
     public static final String LOCALHOST = "localhost";
 
     private Peer iPeer = new Peer(LOCALHOST, MY_PORT);
@@ -52,8 +58,8 @@ public class PeerClient {
 
     private static void initPeerRecords(PeerClient client) {
 
-        for (int port : PEER_PORTS) {
-            client.peerRecords.add(new PeerRecord(LOCALHOST, port));
+        for (Address address : PEERS_ADDRESSES) {
+            client.peerRecords.add(new PeerRecord(address.getIp(), address.getPort()));
         }
 
     }

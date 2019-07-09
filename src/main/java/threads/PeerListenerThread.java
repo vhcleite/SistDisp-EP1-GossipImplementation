@@ -38,7 +38,7 @@ public class PeerListenerThread extends AbstractThread {
 
                 String message = new String(receiveDatagram.getData());
 
-                ThreadLog("Recebido - " + message);
+                ThreadLog(String.format("Recebido[%s]", message));
 
                 MessageHandler messageHandler = new MessageHandler();
                 Peer peer = messageHandler.parseString(message);
@@ -48,7 +48,8 @@ public class PeerListenerThread extends AbstractThread {
                 receiveByteArray = new byte[BUFFER_SIZE];
             }
         } catch (Exception e) {
-            ThreadLog("Erro");
+            ThreadLog("Erro em " + getThreadName());
+            e.printStackTrace();
         }
     }
 

@@ -9,7 +9,7 @@ import model.Peer;
 
 public class MetaDataBuilderThread extends AbstractThread {
 
-    private final static int TIMEOUT = 7000;
+    private final static int TIMEOUT = 3000;
 
     public MetaDataBuilderThread(Peer peer) {
         super(peer);
@@ -20,12 +20,11 @@ public class MetaDataBuilderThread extends AbstractThread {
     public void run() {
 
         while (true) {
-            ThreadLog("START checkup");
 
             String home = System.getProperty("user.home");
             listAllFiles(home + "/gossip_test_folder");
+            ThreadLog(getPeer().getMetadata().toString());
 
-            ThreadLog("END checkup");
             try {
                 Thread.sleep(TIMEOUT);
             } catch (InterruptedException e) {
@@ -49,7 +48,6 @@ public class MetaDataBuilderThread extends AbstractThread {
             // Criado um Metadata para cada verificação para que novo timestamp seja gerado
             // no construtor
             getPeer().setMetadata(new Metadata(files));
-            ThreadLog(getPeer().getMetadata().toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

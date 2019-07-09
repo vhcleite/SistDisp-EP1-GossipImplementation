@@ -33,14 +33,7 @@ public class Metadata {
 
     public String toString() {
 
-        String log = "Metadata content [" + //
-                getFolderContent().size() + "]\r\n" + //
-                creationDate.toString() + "\r\n";
-
-        for (String file : getFolderContent()) {
-            log += (file + "\r\n");
-        }
-
-        return log;
+        return String.format("Metadata content [%d itens] Date [%s] Files: %s", //
+                getFolderContent().size(), creationDate.toString(), getFolderContent().toString());
     }
 }

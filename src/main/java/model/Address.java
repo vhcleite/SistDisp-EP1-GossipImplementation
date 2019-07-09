@@ -31,6 +31,9 @@ public class Address {
     }
 
     public boolean equals(Address address) {
+//        System.out.println("ip: " + this.ip);
+//        System.out.println("address.getIp(): " + address.getIp());
+
         if (this.ip.equals(address.getIp()) && (this.port == address.getPort())) {
             return true;
         }

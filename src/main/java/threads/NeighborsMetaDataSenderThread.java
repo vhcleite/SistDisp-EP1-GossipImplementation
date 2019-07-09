@@ -1,26 +1,31 @@
-package services;
+package threads;
 
+import java.net.DatagramSocket;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.Address;
 import model.Peer;
 import model.PeerRecord;
+import services.LotteryService;
+import services.MessageHandler;
+import services.MetadataSenderService;
 
-public class NeighborsMetaDataSenderThread extends Thread {
+public class NeighborsMetaDataSenderThread extends AbstractThread {
 
     private final static int TIMEOUT = 3000;
     private List<PeerRecord> peerRecords;
     private List<Address> peerAddresses;
-    private Peer iPeer;
+    private DatagramSocket socket;
 
     MessageHandler messageHandler = new MessageHandler();
-    MetadataSenderService metadataSenderService = new MetadataSenderService(iPeer);
 
-    public NeighborsMetaDataSenderThread(Peer iPeer, ArrayList<PeerRecord> peerRecords, List<Address> peersAddresses) {
+    public NeighborsMetaDataSenderThread(DatagramSocket socket, Peer iPeer, ArrayList<PeerRecord> peerRecords,
+            List<Address> peersAddresses) {
+        super(iPeer);
         this.peerRecords = peerRecords;
         this.peerAddresses = peersAddresses;
-        this.iPeer = iPeer;
+        this.socket = socket;
     }
 
     @Override
@@ -39,8 +44,8 @@ public class NeighborsMetaDataSenderThread extends Thread {
             } while (addressToSend.equals(recordToSend.getPeer().getAddress()));
 
             try {
-                metadataSenderService.sendMessage(//
-                        messageHandler.stringfyPeer(recordToSend.getPeer()), addressToSend);
+                MetadataSenderService.sendMessage(socket, messageHandler.stringfyPeer(recordToSend.getPeer()),
+                        addressToSend);
 
                 Thread.sleep(TIMEOUT);
             } catch (InterruptedException e) {
@@ -48,5 +53,10 @@ public class NeighborsMetaDataSenderThread extends Thread {
             }
         }
 
+    }
+
+    @Override
+    public String getThreadName() {
+        return "NeighborsMetadataSenderThread";
     }
 }

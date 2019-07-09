@@ -1,18 +1,20 @@
-package services;
+package threads;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import model.Peer;
 import model.PeerRecord;
 
-public class MetaDataVerifierThread extends Thread {
+public class MetaDataVerifierThread extends AbstractThread {
 
     private static final int THREAD_TIMEOUT = 3000;
     private static final int METADATA_EXPIRATION_TIME = 5000;
 
     private ArrayList<PeerRecord> peerRecords = new ArrayList<PeerRecord>();
 
-    public MetaDataVerifierThread(ArrayList<PeerRecord> peerRecords) {
+    public MetaDataVerifierThread(Peer iPeer, ArrayList<PeerRecord> peerRecords) {
+        super(iPeer);
         this.peerRecords = peerRecords;
     }
 
@@ -39,5 +41,10 @@ public class MetaDataVerifierThread extends Thread {
 
         }
 
+    }
+
+    @Override
+    public String getThreadName() {
+        return "MetadataVerifierThread";
     }
 }

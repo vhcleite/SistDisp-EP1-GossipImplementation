@@ -6,22 +6,16 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import model.Address;
-import model.Peer;
 
 public class MetadataSenderService {
 
-    private Peer iPeer;
+    public static void sendMessage(DatagramSocket sendSocket, String message, Address targetPeerAddress)
+            throws InterruptedException {
 
-    public MetadataSenderService(Peer iPeer) {
-        this.iPeer = iPeer;
-    }
-
-    public void sendMessage(String json, Address targetPeerAddress) throws InterruptedException {
         try {
-            DatagramSocket sendSocket = new DatagramSocket(iPeer.getAddress().getPort());
             InetAddress targetAddress = InetAddress.getByName(targetPeerAddress.getIp());
 
-            byte[] jsonBytes = json.getBytes();
+            byte[] jsonBytes = message.getBytes();
 
             DatagramPacket datagramPacket = new DatagramPacket(//
                     jsonBytes, jsonBytes.length, targetAddress, targetPeerAddress.getPort());
@@ -29,7 +23,7 @@ public class MetadataSenderService {
             sendSocket.send(datagramPacket);
         } catch (IOException e) {
             Thread.sleep(10);
-            sendMessage(json, targetPeerAddress);
+            sendMessage(sendSocket, message, targetPeerAddress);
         }
     }
 }

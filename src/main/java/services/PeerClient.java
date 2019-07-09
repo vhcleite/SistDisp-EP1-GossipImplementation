@@ -15,7 +15,7 @@ import threads.PeerListenerThread;
 
 public class PeerClient {
 
-    public static final int MY_PORT = 9000;
+    public static final int MY_PORT = 9001;
     public static final String LOCALHOST = "127.0.0.1";
     public DatagramSocket socket;
 
@@ -59,7 +59,7 @@ public class PeerClient {
         builderThread.start();
 
         // Thread responsavel por escutar mensagens
-        PeerListenerThread peerListenerThread = new PeerListenerThread(client.iPeer, client.socket);
+        PeerListenerThread peerListenerThread = new PeerListenerThread(client.iPeer, client.socket, client.peerRecords);
         peerListenerThread.start();
 
         // Thread responsavel por enviar os meus metadados para os peers vizinhos

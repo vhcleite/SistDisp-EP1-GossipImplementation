@@ -13,6 +13,11 @@ public class PeerRecord {
         receivingDate = null;
     }
 
+    public PeerRecord(Peer peer, Date now) {
+        this.peer = peer;
+        this.receivingDate = now;
+    }
+
     public Peer getPeer() {
         return peer;
     }

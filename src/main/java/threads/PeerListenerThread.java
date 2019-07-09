@@ -2,17 +2,25 @@ package threads;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 
 import model.Peer;
+import model.PeerRecord;
+import services.MessageHandler;
 
 public class PeerListenerThread extends AbstractThread {
 
     public final static int BUFFER_SIZE = 65535;
+
+    ArrayList<PeerRecord> peerRecords;
     DatagramSocket socket;
 
-    public PeerListenerThread(Peer iPeer, DatagramSocket socket) {
+    public PeerListenerThread(Peer iPeer, DatagramSocket socket, ArrayList<PeerRecord> peerRecords) {
         super(iPeer);
         this.socket = socket;
+        this.peerRecords = peerRecords;
     }
 
     @Override
@@ -32,12 +40,43 @@ public class PeerListenerThread extends AbstractThread {
 
                 ThreadLog("Recebido - " + message);
 
+                MessageHandler messageHandler = new MessageHandler();
+                Peer peer = messageHandler.parseString(message);
+                handlePeer(peer);
+
                 // Clear the buffer after every message.
                 receiveByteArray = new byte[BUFFER_SIZE];
             }
         } catch (Exception e) {
             ThreadLog("Erro");
         }
+    }
+
+    private void handlePeer(Peer peer) {
+
+        PeerRecord newPeerRecord = new PeerRecord(peer, new Date());
+
+        Iterator<PeerRecord> it = peerRecords.iterator();
+
+        while (it.hasNext()) {
+            PeerRecord savedPeerRecord = it.next();
+            if (newPeerRecord.getPeer().getAddress().equals(savedPeerRecord.getPeer().getAddress())) {
+                // encontrou registro gravado do peer recebido
+                if (savedPeerRecord.getPeer().getMetadata() == null || //
+                        newPeerRecord.getPeer().getMetadata().isYoungerThan(savedPeerRecord.getPeer().getMetadata())) {
+                    // nunca foram gravados dados. Gravar pela primeira vez
+                    savedPeerRecord.setPeer(newPeerRecord.getPeer());
+                    savedPeerRecord.setReceivingDate(newPeerRecord.getReceivingDate());
+
+                    ThreadLog("Salvando novos metadados para PeerRecord: "
+                            + savedPeerRecord.getPeer().getAddress().toString());
+                }
+                return;
+            }
+        }
+
+        // não encontrou registro com o endereço do peerRecord. Basta adicionar
+        peerRecords.add(newPeerRecord);
     }
 
     public String getThreadName() {

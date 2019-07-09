@@ -36,4 +36,11 @@ public class Metadata {
         return String.format("Metadata content [%d itens] Date [%s] Files: %s", //
                 getFolderContent().size(), creationDate.toString(), getFolderContent().toString());
     }
+
+    public boolean isYoungerThan(Metadata metadata) {
+        if (this.creationDate.after(metadata.getCreationDate())) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -15,7 +15,7 @@ import threads.PeerListenerThread;
 
 public class PeerClient {
 
-    public static final int MY_PORT = 9001;
+    public static final int MY_PORT = 9000;
     public static final String LOCALHOST = "127.0.0.1";
     public DatagramSocket socket;
 

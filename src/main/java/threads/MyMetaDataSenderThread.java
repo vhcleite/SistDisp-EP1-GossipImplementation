@@ -28,9 +28,6 @@ public class MyMetaDataSenderThread extends AbstractThread {
         while (true) {
             // sorteia um peer para enviar metadados
             Address addressToSend = peerAddresses.get(LotteryService.getRandomInt(peerAddresses.size()));
-
-            ThreadLog("destinatario escolhido - " + addressToSend);
-
             try {
                 if (!addressToSend.equals(getPeer().getAddress())) {
 

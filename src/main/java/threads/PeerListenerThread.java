@@ -38,10 +38,10 @@ public class PeerListenerThread extends AbstractThread {
 
                 String message = new String(receiveDatagram.getData());
 
-                ThreadLog(String.format("Recebido[%s]", message));
+                ThreadLog(String.format("Recebido[size %d][%s]", message.length(), message));
 
                 MessageHandler messageHandler = new MessageHandler();
-                Peer peer = messageHandler.parseString(message);
+                Peer peer = messageHandler.parseString(getValidJsonString(message));
                 handlePeer(peer);
 
                 // Clear the buffer after every message.
@@ -51,6 +51,14 @@ public class PeerListenerThread extends AbstractThread {
             ThreadLog("Erro em " + getThreadName());
             e.printStackTrace();
         }
+    }
+
+    private String getValidJsonString(String message) {
+        int index = 0;
+        while (message.charAt(index) != '\0') {
+            index++;
+        }
+        return message.substring(0, index);
     }
 
     private void handlePeer(Peer peer) {

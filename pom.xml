@@ -8,7 +8,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.1</version>
         <configuration>
           <source>8</source>
           <target>8</target>
@@ -17,24 +16,22 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
+        <version>1.2.1</version>
         <executions>
           <execution>
             <goals>
               <goal>java</goal>
             </goals>
-            <configuration>
-              <mainClass>services.PeerClient</mainClass>
-              <arguments>
-                <argument>arg0</argument>
-                <argument>arg1</argument>
-              </arguments>
-            </configuration>
           </execution>
         </executions>
+        <configuration>
+          <mainClass>services.PeerClient</mainClass>
+          <arguments>
+            <argument>9000</argument>
+            <argument>127.0.0.1:9001</argument>
+          </arguments>
+        </configuration>
       </plugin>
-
-
     </plugins>
   </build>
   <name>GossipImplementention</name>

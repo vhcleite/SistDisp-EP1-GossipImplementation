@@ -12,6 +12,7 @@ import model.Address;
 import model.Peer;
 import model.PeerRecord;
 import threads.MetaDataBuilderThread;
+import threads.MetaDataVerifierThread;
 import threads.MyMetaDataSenderThread;
 import threads.NeighborsMetaDataSenderThread;
 import threads.PeerListenerThread;
@@ -82,10 +83,14 @@ public class PeerClient {
                 client.peerAddresses);
         myMetadataSenderThread.start();
 
-        // Thread responsavel por enviar os meus metadados para os peers vizinhos
+        // Thread responsavel por enviar os de peers vizinhos para os peers vizinhos
         NeighborsMetaDataSenderThread neighborsMetadataSenderThread = new NeighborsMetaDataSenderThread(client.iPeer,
                 client.socket, client.peerRecords, client.peerAddresses);
         neighborsMetadataSenderThread.start();
+
+        // Thread responsavel por enviar os de peers vizinhos para os peers vizinhos
+        MetaDataVerifierThread metaDataVerifierThread = new MetaDataVerifierThread(client.iPeer, client.peerRecords);
+        metaDataVerifierThread.start();
     }
 
 }

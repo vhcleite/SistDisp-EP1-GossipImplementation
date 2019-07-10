@@ -36,6 +36,10 @@ public class PeerRecord {
 
     public boolean isExpired(int expirationTime) {
 
+        if (getReceivingDate() == null) {
+            return false;
+        }
+
         Date now = new Date();
 
         long difference = now.getTime() - this.receivingDate.getTime();

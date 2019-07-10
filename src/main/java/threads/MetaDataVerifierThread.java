@@ -9,7 +9,7 @@ import model.PeerRecord;
 public class MetaDataVerifierThread extends AbstractThread {
 
     private static final int THREAD_TIMEOUT = 3000;
-    private static final int METADATA_EXPIRATION_TIME = 5000;
+    private static final int METADATA_EXPIRATION_TIME = 10000;
 
     private ArrayList<PeerRecord> peerRecords = new ArrayList<PeerRecord>();
 
@@ -27,8 +27,9 @@ public class MetaDataVerifierThread extends AbstractThread {
                     PeerRecord peerRecord = iterator.next();
 
                     if (peerRecord.isExpired(METADATA_EXPIRATION_TIME)) {
-                        // se nao eh valido remove o registro
+                        // se o registro esta expirado deve ser removido
                         iterator.remove();
+                        ThreadLog(String.format("Registro %s removido", peerRecord.getPeer().getAddress()));
                     }
 
                 }

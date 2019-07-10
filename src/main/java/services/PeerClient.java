@@ -13,11 +13,12 @@ import model.Peer;
 import model.PeerRecord;
 import threads.MetaDataBuilderThread;
 import threads.MyMetaDataSenderThread;
+import threads.NeighborsMetaDataSenderThread;
 import threads.PeerListenerThread;
 
 public class PeerClient {
 
-    public static final int MY_PORT = 9006;
+    public static final int MY_PORT = 9001;
     public String localHost;
     public DatagramSocket socket;
     public List<Address> peerAddresses;
@@ -44,10 +45,10 @@ public class PeerClient {
 
         this.peerAddresses = Arrays.asList(//
                 new Address(this.localHost, 9000), //
-                new Address(this.localHost, 9001), //
-                new Address(this.localHost, 9002), //
-                new Address(this.localHost, 9003), //
-                new Address(this.localHost, 9004)); // ;
+                new Address(this.localHost, 9001)); //
+//                new Address(this.localHost, 9002), //
+//                new Address(this.localHost, 9003), //
+//                new Address(this.localHost, 9004)); // ;
 
         for (Address address : this.peerAddresses) {
             this.peerRecords.add(new PeerRecord(address.getIp(), address.getPort()));
@@ -80,6 +81,11 @@ public class PeerClient {
         MyMetaDataSenderThread myMetadataSenderThread = new MyMetaDataSenderThread(client.socket, client.iPeer,
                 client.peerAddresses);
         myMetadataSenderThread.start();
+
+        // Thread responsavel por enviar os meus metadados para os peers vizinhos
+        NeighborsMetaDataSenderThread neighborsMetadataSenderThread = new NeighborsMetaDataSenderThread(client.iPeer,
+                client.socket, client.peerRecords, client.peerAddresses);
+        neighborsMetadataSenderThread.start();
     }
 
 }

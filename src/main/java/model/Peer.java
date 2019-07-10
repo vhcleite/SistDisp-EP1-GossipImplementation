@@ -28,6 +28,7 @@ public class Peer {
     }
 
     public String toString() {
-        return " ADDRESS -> " + getAddress().toString() + "/\r\nMETADATA -> " + getMetadata().toString();
+        return " ADDRESS -> " + getAddress().toString() + "/\r\nMETADATA -> "
+                + (getMetadata() != null ? getMetadata().toString() : "null");
     }
 }

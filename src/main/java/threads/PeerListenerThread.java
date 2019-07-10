@@ -38,7 +38,8 @@ public class PeerListenerThread extends AbstractThread {
 
                 String message = new String(receiveDatagram.getData());
 
-                ThreadLog(String.format("Recebido[%s]", message));
+                ThreadLog(String.format("Recebido de %s:%d [%s]", receiveDatagram.getAddress().getHostAddress(),
+                        receiveDatagram.getPort(), message));
 
                 MessageHandler messageHandler = new MessageHandler();
                 Peer peer = messageHandler.parseString(getValidJsonString(message));

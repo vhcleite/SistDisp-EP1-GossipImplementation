@@ -20,7 +20,7 @@ public class NeighborsMetaDataSenderThread extends AbstractThread {
 
     MessageHandler messageHandler = new MessageHandler();
 
-    public NeighborsMetaDataSenderThread(DatagramSocket socket, Peer iPeer, ArrayList<PeerRecord> peerRecords,
+    public NeighborsMetaDataSenderThread(Peer iPeer, DatagramSocket socket, ArrayList<PeerRecord> peerRecords,
             List<Address> peersAddresses) {
         super(iPeer);
         this.peerRecords = peerRecords;
@@ -41,11 +41,17 @@ public class NeighborsMetaDataSenderThread extends AbstractThread {
 
                 // sorteia um peer para pegar os metadados
                 recordToSend = peerRecords.get(LotteryService.getRandomInt(peerRecords.size()));
-            } while (addressToSend.equals(recordToSend.getPeer().getAddress()));
+            } while (addressToSend.equals(recordToSend.getPeer().getAddress()) //
+                    || addressToSend.equals(getPeer().getAddress()) //
+                    || (recordToSend.getPeer().getMetadata() == null));
 
             try {
-                MetadataSenderService.sendMessage(socket, messageHandler.stringfyPeer(recordToSend.getPeer()),
-                        addressToSend);
+                if (getPeer().getMetadata() != null) {
+                    MetadataSenderService.sendMessage(socket, messageHandler.stringfyPeer(recordToSend.getPeer()),
+                            addressToSend);
+                    ThreadLog(String.format("Metadados de %s enviados para %s", recordToSend.getPeer().getAddress(),
+                            addressToSend));
+                }
 
                 Thread.sleep(TIMEOUT);
             } catch (InterruptedException e) {

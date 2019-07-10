@@ -34,8 +34,10 @@ public class MyMetaDataSenderThread extends AbstractThread {
             } while (addressToSend.equals(getPeer().getAddress()));
 
             try {
-                MetadataSenderService.sendMessage(socket, messageHandler.stringfyPeer(getPeer()), addressToSend);
-                ThreadLog("Metadados enviados para " + addressToSend);
+                if (getPeer().getMetadata() != null) {
+                    MetadataSenderService.sendMessage(socket, messageHandler.stringfyPeer(getPeer()), addressToSend);
+                    ThreadLog("Metadados enviados para " + addressToSend);
+                }
 
                 Thread.sleep(TIMEOUT);
             } catch (InterruptedException e) {

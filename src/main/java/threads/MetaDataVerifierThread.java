@@ -11,7 +11,7 @@ public class MetaDataVerifierThread extends AbstractThread {
     private static final int THREAD_TIMEOUT = 3000;
     private static final int METADATA_EXPIRATION_TIME = 10000;
 
-    private ArrayList<PeerRecord> peerRecords = new ArrayList<PeerRecord>();
+    private ArrayList<PeerRecord> peerRecords;
 
     public MetaDataVerifierThread(Peer iPeer, ArrayList<PeerRecord> peerRecords) {
         super(iPeer);

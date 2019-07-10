@@ -42,4 +42,8 @@ public class PeerRecord {
         return difference > expirationTime;
     }
 
+    public String toString() {
+        return "RECEIVING DATE ->" + getReceivingDate().toString() + "/ " + getPeer().toString();
+    }
+
 }

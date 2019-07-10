@@ -2,13 +2,8 @@ package model;
 
 public class Peer {
 
-    Metadata metadata;
-
     Address address;
-
-    public Peer() {
-
-    }
+    Metadata metadata;
 
     public Peer(String ip, int port) {
         super();
@@ -30,5 +25,9 @@ public class Peer {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String toString() {
+        return " ADDRESS -> " + getAddress().toString() + "/\r\nMETADATA -> " + getMetadata().toString();
     }
 }

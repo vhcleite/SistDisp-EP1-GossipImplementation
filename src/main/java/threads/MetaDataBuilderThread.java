@@ -9,7 +9,7 @@ import model.Peer;
 
 public class MetaDataBuilderThread extends AbstractThread {
 
-    private final static int TIMEOUT = 3000;
+    private final static int TIMEOUT = 1000;
 
     public MetaDataBuilderThread(Peer peer) {
         super(peer);

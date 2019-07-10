@@ -1,7 +1,9 @@
 package services;
 
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,27 +17,39 @@ import threads.PeerListenerThread;
 
 public class PeerClient {
 
-    public static final int MY_PORT = 9000;
-    public static final String LOCALHOST = "127.0.0.1";
+    public static final int MY_PORT = 9006;
+    public String localHost;
     public DatagramSocket socket;
+    public List<Address> peerAddresses;
 
-    public static final List<Address> PEER_ADDRESSES = Arrays.asList(//
-            new Address("127.0.0.1", 9000), //
-            new Address("127.0.0.1", 9001)); //
-//            new Address("127.0.0.1", 9002), //
-//            new Address("127.0.0.1", 9003), //
-//            new Address("127.0.0.1", 9002)); //
-
-    private Peer iPeer = new Peer(LOCALHOST, MY_PORT);
+    private Peer iPeer;
     private ArrayList<PeerRecord> peerRecords = new ArrayList<PeerRecord>();
 
     public PeerClient() {
-        initPeerRecords();
         initSocket();
+        initPeer();
+        initPeerRecords();
+    }
+
+    private void initPeer() {
+        try {
+            this.localHost = InetAddress.getLocalHost().getHostAddress();
+            this.iPeer = new Peer(localHost, MY_PORT);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initPeerRecords() {
-        for (Address address : PEER_ADDRESSES) {
+
+        this.peerAddresses = Arrays.asList(//
+                new Address(this.localHost, 9000), //
+                new Address(this.localHost, 9001), //
+                new Address(this.localHost, 9002), //
+                new Address(this.localHost, 9003), //
+                new Address(this.localHost, 9004)); // ;
+
+        for (Address address : this.peerAddresses) {
             this.peerRecords.add(new PeerRecord(address.getIp(), address.getPort()));
         }
     }
@@ -64,7 +78,7 @@ public class PeerClient {
 
         // Thread responsavel por enviar os meus metadados para os peers vizinhos
         MyMetaDataSenderThread myMetadataSenderThread = new MyMetaDataSenderThread(client.socket, client.iPeer,
-                PEER_ADDRESSES);
+                client.peerAddresses);
         myMetadataSenderThread.start();
     }
 

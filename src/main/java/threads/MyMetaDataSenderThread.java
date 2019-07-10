@@ -11,7 +11,7 @@ import services.MetadataSenderService;
 
 public class MyMetaDataSenderThread extends AbstractThread {
 
-    private final static int TIMEOUT = 3000;
+    private final static int TIMEOUT = 6000;
     private List<Address> peerAddresses;
     private DatagramSocket socket;
 
@@ -26,16 +26,17 @@ public class MyMetaDataSenderThread extends AbstractThread {
     @Override
     public void run() {
         while (true) {
-            // sorteia um peer para enviar metadados
-            Address addressToSend = peerAddresses.get(LotteryService.getRandomInt(peerAddresses.size()));
-            try {
-                if (!addressToSend.equals(getPeer().getAddress())) {
 
-                    MetadataSenderService.sendMessage(socket, messageHandler.stringfyPeer(getPeer()), addressToSend);
-                    ThreadLog("Metadados enviados para " + addressToSend);
-                } else {
-                    ThreadLog("Escolhido endereço próprio. Metadados não enviados.");
-                }
+            // sorteia um peer para enviar metadados
+            Address addressToSend;
+            do {
+                addressToSend = peerAddresses.get(LotteryService.getRandomInt(peerAddresses.size()));
+            } while (addressToSend.equals(getPeer().getAddress()));
+
+            try {
+                MetadataSenderService.sendMessage(socket, messageHandler.stringfyPeer(getPeer()), addressToSend);
+                ThreadLog("Metadados enviados para " + addressToSend);
+
                 Thread.sleep(TIMEOUT);
             } catch (InterruptedException e) {
                 e.printStackTrace();

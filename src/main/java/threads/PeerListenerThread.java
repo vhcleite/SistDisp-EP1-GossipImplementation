@@ -33,12 +33,12 @@ public class PeerListenerThread extends AbstractThread {
 
                 receiveDatagram = new DatagramPacket(receiveByteArray, receiveByteArray.length);
 
-                ThreadLog("Esperando pacote");
+                ThreadLog("Escutando...");
                 socket.receive(receiveDatagram);
 
                 String message = new String(receiveDatagram.getData());
 
-                ThreadLog(String.format("Recebido[size %d][%s]", message.length(), message));
+                ThreadLog(String.format("Recebido[%s]", message));
 
                 MessageHandler messageHandler = new MessageHandler();
                 Peer peer = messageHandler.parseString(getValidJsonString(message));
@@ -71,20 +71,19 @@ public class PeerListenerThread extends AbstractThread {
             PeerRecord savedPeerRecord = it.next();
             if (newPeerRecord.getPeer().getAddress().equals(savedPeerRecord.getPeer().getAddress())) {
                 // encontrou registro gravado do peer recebido
+
                 if (savedPeerRecord.getPeer().getMetadata() == null || //
                         newPeerRecord.getPeer().getMetadata().isYoungerThan(savedPeerRecord.getPeer().getMetadata())) {
-                    // nunca foram gravados dados. Gravar pela primeira vez
                     savedPeerRecord.setPeer(newPeerRecord.getPeer());
                     savedPeerRecord.setReceivingDate(newPeerRecord.getReceivingDate());
-
-                    ThreadLog("Salvando novos metadados para PeerRecord: "
-                            + savedPeerRecord.getPeer().getAddress().toString());
+                    ThreadLog("Atualizado registro para:\r\n" + savedPeerRecord.toString());
                 }
                 return;
             }
         }
 
         // não encontrou registro com o endereço do peerRecord. Basta adicionar
+        ThreadLog("Criado novo registro para: " + newPeerRecord.getPeer().getAddress().toString());
         peerRecords.add(newPeerRecord);
     }
 

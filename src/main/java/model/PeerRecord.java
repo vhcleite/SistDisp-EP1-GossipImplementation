@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class PeerRecord {
 
@@ -47,7 +48,7 @@ public class PeerRecord {
     }
 
     public String toString() {
-        return "RECEIVING DATE ->" + getReceivingDate().toString() + "/ " + getPeer().toString();
+        return "RECEIVING DATE -> " + Objects.toString(getReceivingDate()) + "/ " + Objects.toString(getPeer());
     }
 
 }

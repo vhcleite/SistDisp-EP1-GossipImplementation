@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Peer {
 
     Address address;
@@ -28,7 +30,6 @@ public class Peer {
     }
 
     public String toString() {
-        return " ADDRESS -> " + getAddress().toString() + "/\r\nMETADATA -> "
-                + (getMetadata() != null ? getMetadata().toString() : "null");
+        return "ADDRESS -> " + getAddress().toString() + "/\r\n                     " + Objects.toString(getMetadata());
     }
 }

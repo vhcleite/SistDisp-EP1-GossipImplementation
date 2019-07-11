@@ -30,6 +30,8 @@ public class MetaDataVerifierThread extends AbstractThread {
                         // se o registro esta expirado deve ser removido
                         iterator.remove();
                         ThreadLog(String.format("Registro %s removido", peerRecord.getPeer().getAddress()));
+
+                        logPeerRecords(peerRecords);
                     }
 
                 }

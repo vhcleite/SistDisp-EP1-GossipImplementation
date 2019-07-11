@@ -45,6 +45,8 @@ public class PeerListenerThread extends AbstractThread {
                 Peer peer = messageHandler.parseString(getValidJsonString(message));
                 handlePeer(peer);
 
+                logPeerRecords(peerRecords);
+
                 // Clear the buffer after every message.
                 receiveByteArray = new byte[BUFFER_SIZE];
             }
@@ -64,28 +66,32 @@ public class PeerListenerThread extends AbstractThread {
 
     private void handlePeer(Peer peer) {
 
-        PeerRecord newPeerRecord = new PeerRecord(peer, new Date());
+        if (!peer.getAddress().equals(getPeer().getAddress())) {
 
-        Iterator<PeerRecord> it = peerRecords.iterator();
+            PeerRecord newPeerRecord = new PeerRecord(peer, new Date());
 
-        while (it.hasNext()) {
-            PeerRecord savedPeerRecord = it.next();
-            if (newPeerRecord.getPeer().getAddress().equals(savedPeerRecord.getPeer().getAddress())) {
-                // encontrou registro gravado do peer recebido
+            Iterator<PeerRecord> it = peerRecords.iterator();
 
-                if (savedPeerRecord.getPeer().getMetadata() == null || //
-                        newPeerRecord.getPeer().getMetadata().isYoungerThan(savedPeerRecord.getPeer().getMetadata())) {
-                    savedPeerRecord.setPeer(newPeerRecord.getPeer());
-                    savedPeerRecord.setReceivingDate(newPeerRecord.getReceivingDate());
-                    ThreadLog("Atualizado registro para:\r\n" + savedPeerRecord.toString());
+            while (it.hasNext()) {
+                PeerRecord savedPeerRecord = it.next();
+                if (newPeerRecord.getPeer().getAddress().equals(savedPeerRecord.getPeer().getAddress())) {
+                    // encontrou registro gravado do peer recebido
+                    if (savedPeerRecord.getReceivingDate() == null //
+                            || newPeerRecord.getPeer().getMetadata() == null //
+                            || newPeerRecord.getPeer().getMetadata()
+                                    .isYoungerThan(savedPeerRecord.getPeer().getMetadata())) {
+                        savedPeerRecord.setPeer(newPeerRecord.getPeer());
+                        savedPeerRecord.setReceivingDate(newPeerRecord.getReceivingDate());
+                        ThreadLog("Atualizado registro para:\r\n" + savedPeerRecord.toString());
+                    }
+                    return;
                 }
-                return;
             }
-        }
 
-        // não encontrou registro com o endereço do peerRecord. Basta adicionar
-        ThreadLog("Criado novo registro para: " + newPeerRecord.getPeer().getAddress().toString());
-        peerRecords.add(newPeerRecord);
+            // não encontrou registro com o endereço do peerRecord. Basta adicionar
+            ThreadLog("Criado novo registro para: " + newPeerRecord.getPeer().getAddress().toString());
+            peerRecords.add(newPeerRecord);
+        }
     }
 
     public String getThreadName() {

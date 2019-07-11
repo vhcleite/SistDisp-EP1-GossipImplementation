@@ -33,7 +33,7 @@ public class Metadata {
 
     public String toString() {
 
-        return String.format("Metadata content [%d itens] Date [%s] Files: %s", //
+        return String.format("METADATA -> [%d itens] Creation Date [%s] Files: %s", //
                 getFolderContent().size(), creationDate.toString(), getFolderContent().toString());
     }
 

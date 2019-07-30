@@ -22,7 +22,7 @@ public class MetaDataBuilderThread extends AbstractThread {
         while (true) {
 
             String home = System.getProperty("user.home");
-            listAllFiles(home + "/gossip_test_folder");
+            listAllFiles(home + "/" + getPeer().getAddress().getIp());
             ThreadLog(getPeer().getMetadata().toString());
 
             try {

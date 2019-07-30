@@ -20,7 +20,8 @@ public class ClientMessageHandler extends AbstractThread {
     private ArrayList<PeerRecord> peerRecords;
     private DatagramSocket socket;
 
-    public ClientMessageHandler(DatagramSocket socket, Peer iPeer, ArrayList<PeerRecord> peerRecords, ArrayList<Query> queries, Query query, Semaphore semaphore) {
+    public ClientMessageHandler(DatagramSocket socket, Peer iPeer, ArrayList<PeerRecord> peerRecords,
+                                ArrayList<Query> queries, Query query, Semaphore semaphore) {
         super(iPeer);
         this.socket = socket;
         this.peerRecords = peerRecords;
@@ -80,7 +81,7 @@ public class ClientMessageHandler extends AbstractThread {
 
     private File getFile(String queryFile, Peer iPeer) {
         String home = System.getProperty("user.home");
-        String gossipFolder = home + iPeer.getAddress().getIp() + queryFile;
+        String gossipFolder = home + "/" + iPeer.getAddress().getIp() + "/" + queryFile;
         return new File(gossipFolder);
     }
 

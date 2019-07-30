@@ -40,7 +40,7 @@ public class PeerClient {
             this.localHost = InetAddress.getLocalHost().getHostAddress();
             this.iPeer = new Peer(localHost, localPeerPort);
             String home = System.getProperty("user.home");
-            String gossipFolder = home + localPeerPort;
+            String gossipFolder = home + "/" + localPeerPort;
             new File(gossipFolder).mkdirs();
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class PeerClient {
 
         for (String address : split) {
             String[] addressArray = address.split(":");
-            addresses.add(new Address(addressArray[0],Integer.valueOf(addressArray[1])));
+            addresses.add(new Address(addressArray[0], Integer.valueOf(addressArray[1])));
         }
 
         this.peerAddresses = addresses;
@@ -76,7 +76,7 @@ public class PeerClient {
     public static void main(String args[]) {
 
 
-        if(args.length != 2){
+        if (args.length != 2) {
             System.out.println("Os argumento são: ");
             System.out.println("(1) porta do peer local");
             System.out.println("(2) lista de ip1:porta1,ip2:porta2 separados por vírgulas dos peers remotos");

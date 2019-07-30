@@ -7,7 +7,7 @@ import model.Address;
 import model.Peer;
 import services.LotteryService;
 import services.MessageHandler;
-import services.MetadataSenderService;
+import services.MessageSenderService;
 
 public class MyMetaDataSenderThread extends AbstractThread {
 
@@ -35,7 +35,7 @@ public class MyMetaDataSenderThread extends AbstractThread {
 
             try {
                 if (getPeer().getMetadata() != null) {
-                    MetadataSenderService.sendMessage(socket, messageHandler.stringfyPeer(getPeer()), addressToSend);
+                    MessageSenderService.sendMessage(socket, messageHandler.stringfy(getPeer()), addressToSend);
                     ThreadLog("Metadados enviados para " + addressToSend);
                 }
 

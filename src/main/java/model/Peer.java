@@ -32,4 +32,21 @@ public class Peer {
     public String toString() {
         return "ADDRESS -> " + getAddress().toString() + "/\r\n                     " + Objects.toString(getMetadata());
     }
+
+    public boolean hasFile(String file){
+        return this.metadata.getFolderContent().contains(file);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Peer peer = (Peer) o;
+        return address.equals(peer.address);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(address);
+    }
 }

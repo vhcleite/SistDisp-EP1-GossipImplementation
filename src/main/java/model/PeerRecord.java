@@ -51,4 +51,16 @@ public class PeerRecord {
         return "RECEIVING DATE -> " + Objects.toString(getReceivingDate()) + "/ " + Objects.toString(getPeer());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PeerRecord that = (PeerRecord) o;
+        return peer.equals(that.peer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(peer);
+    }
 }

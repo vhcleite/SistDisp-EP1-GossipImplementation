@@ -1,5 +1,6 @@
 package services;
 
+import java.io.File;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -11,6 +12,7 @@ import java.util.List;
 import model.Address;
 import model.Peer;
 import model.PeerRecord;
+import model.Query;
 import threads.MetaDataBuilderThread;
 import threads.MetaDataVerifierThread;
 import threads.MyMetaDataSenderThread;
@@ -19,13 +21,13 @@ import threads.PeerListenerThread;
 
 public class PeerClient {
 
-    public static int localPort = 9001;
     public String localHost;
     public DatagramSocket socket;
     public List<Address> peerAddresses;
 
     private Peer iPeer;
     private ArrayList<PeerRecord> peerRecords = new ArrayList<PeerRecord>();
+    private ArrayList<Query> queriesDone = new ArrayList<>();
 
     public PeerClient(Integer localPeerPort, String remotePeersList) {
         initSocket(localPeerPort);
@@ -37,6 +39,9 @@ public class PeerClient {
         try {
             this.localHost = InetAddress.getLocalHost().getHostAddress();
             this.iPeer = new Peer(localHost, localPeerPort);
+            String home = System.getProperty("user.home");
+            String gossipFolder = home + localPeerPort;
+            new File(gossipFolder).mkdirs();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -89,7 +94,7 @@ public class PeerClient {
         builderThread.start();
 
         // Thread responsavel por escutar mensagens
-        PeerListenerThread peerListenerThread = new PeerListenerThread(client.iPeer, client.socket, client.peerRecords);
+        PeerListenerThread peerListenerThread = new PeerListenerThread(client.iPeer, client.socket, client.peerRecords, client.queriesDone);
         peerListenerThread.start();
 
         // Thread responsavel por enviar os meus metadados para os peers vizinhos

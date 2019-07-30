@@ -7,7 +7,7 @@ import java.net.InetAddress;
 
 import model.Address;
 
-public class MetadataSenderService {
+public class MessageSenderService {
 
     public static void sendMessage(DatagramSocket sendSocket, String message, Address targetPeerAddress)
             throws InterruptedException {

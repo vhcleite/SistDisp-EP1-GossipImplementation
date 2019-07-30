@@ -3,7 +3,10 @@ package services;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import model.Message;
+import model.MessageType;
 import model.Peer;
+import model.Query;
 
 public class MessageHandler {
 
@@ -14,9 +17,19 @@ public class MessageHandler {
         this.gson = gsonBuilder.setLenient().create();
     }
 
-    public Peer parseString(String jsonString) {
+
+    public Message parseMessage(String jsonString) {
         try {
-//            System.out.println("String to Peer: " + jsonString);
+            Message message = gson.fromJson(jsonString, Message.class);
+            return message;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Peer parsePeerMessage(String jsonString) {
+        try {
             Peer peer = gson.fromJson(jsonString, Peer.class);
             return peer;
         } catch (Exception e) {
@@ -25,14 +38,32 @@ public class MessageHandler {
         return null;
     }
 
-    public String stringfyPeer(Peer peer) {
+    public Query parseQueryMessage(String jsonString) {
         try {
-            String jsonString = gson.toJson(peer);
+            Query query = gson.fromJson(jsonString, Query.class);
+            return query;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String stringfy(Object object) {
+        try {
+            String jsonString = gson.toJson(object);
 //            System.out.println("Peer to String: " + jsonString);
             return jsonString;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public String getValidJsonString(String message) {
+        int index = 0;
+        while (message.charAt(index) != '\0') {
+            index++;
+        }
+        return message.substring(0, index);
     }
 }

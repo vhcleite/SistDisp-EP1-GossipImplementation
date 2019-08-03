@@ -11,7 +11,7 @@ import services.LotteryService;
 import services.MessageHandler;
 import services.MessageSenderService;
 
-public class NeighborsMetaDataSenderThread extends AbstractThread {
+public class NeighborsMetadataSenderThread extends AbstractThread {
 
     private final static int TIMEOUT = 3000;
     private List<PeerRecord> peerRecords;
@@ -20,7 +20,7 @@ public class NeighborsMetaDataSenderThread extends AbstractThread {
 
     MessageHandler messageHandler = new MessageHandler();
 
-    public NeighborsMetaDataSenderThread(Peer iPeer, DatagramSocket socket, ArrayList<PeerRecord> peerRecords,
+    public NeighborsMetadataSenderThread(Peer iPeer, DatagramSocket socket, ArrayList<PeerRecord> peerRecords,
             List<Address> peersAddresses) {
         super(iPeer);
         this.peerRecords = peerRecords;

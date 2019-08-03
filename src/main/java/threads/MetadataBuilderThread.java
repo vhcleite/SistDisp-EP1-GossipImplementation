@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import model.Metadata;
 import model.Peer;
 
-public class MetaDataBuilderThread extends AbstractThread {
+public class MetadataBuilderThread extends AbstractThread {
 
     private final static int TIMEOUT = 1000;
 
-    public MetaDataBuilderThread(Peer peer) {
+    public MetadataBuilderThread(Peer peer) {
         super(peer);
     }
 

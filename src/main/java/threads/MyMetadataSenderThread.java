@@ -9,7 +9,7 @@ import services.LotteryService;
 import services.MessageHandler;
 import services.MessageSenderService;
 
-public class MyMetaDataSenderThread extends AbstractThread {
+public class MyMetadataSenderThread extends AbstractThread {
 
     private final static int TIMEOUT = 6000;
     private List<Address> peerAddresses;
@@ -17,7 +17,7 @@ public class MyMetaDataSenderThread extends AbstractThread {
 
     MessageHandler messageHandler = new MessageHandler();
 
-    public MyMetaDataSenderThread(DatagramSocket socket, Peer iPeer, List<Address> peersAddresses) {
+    public MyMetadataSenderThread(DatagramSocket socket, Peer iPeer, List<Address> peersAddresses) {
         super(iPeer);
         this.peerAddresses = peersAddresses;
         this.socket = socket;

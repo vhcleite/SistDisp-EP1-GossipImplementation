@@ -6,17 +6,16 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import model.Address;
 import model.Peer;
 import model.PeerRecord;
 import model.Query;
-import threads.MetaDataBuilderThread;
-import threads.MetaDataVerifierThread;
-import threads.MyMetaDataSenderThread;
-import threads.NeighborsMetaDataSenderThread;
+import threads.MetadataBuilderThread;
+import threads.MetadataVerifierThread;
+import threads.MyMetadataSenderThread;
+import threads.NeighborsMetadataSenderThread;
 import threads.PeerListenerThread;
 
 public class PeerClient {
@@ -75,7 +74,6 @@ public class PeerClient {
 
     public static void main(String args[]) {
 
-
         if (args.length != 2) {
             System.out.println("Os argumento são: ");
             System.out.println("(1) porta do peer local");
@@ -85,30 +83,31 @@ public class PeerClient {
         Integer localPeerPort = Integer.valueOf(args[0]);
         String remotePeersList = args[1];
 
-
         PeerClient client = new PeerClient(localPeerPort, remotePeersList);
 
         // Para thread funcionar é esperado que exista a pasta gossip_test_folder na
         // home do usuario
-        MetaDataBuilderThread builderThread = new MetaDataBuilderThread(client.iPeer);
+        MetadataBuilderThread builderThread = new MetadataBuilderThread(client.iPeer);
         builderThread.start();
 
         // Thread responsavel por escutar mensagens
-        PeerListenerThread peerListenerThread = new PeerListenerThread(client.iPeer, client.socket, client.peerRecords, client.queriesDone);
+        PeerListenerThread peerListenerThread = new PeerListenerThread(client.iPeer, client.socket, client.peerRecords,
+                client.queriesDone);
         peerListenerThread.start();
 
         // Thread responsavel por enviar os meus metadados para os peers vizinhos
-        MyMetaDataSenderThread myMetadataSenderThread = new MyMetaDataSenderThread(client.socket, client.iPeer,
+        MyMetadataSenderThread myMetadataSenderThread = new MyMetadataSenderThread(client.socket, client.iPeer,
                 client.peerAddresses);
         myMetadataSenderThread.start();
 
-        // Thread responsavel por enviar os de peers vizinhos para os peers vizinhos
-        NeighborsMetaDataSenderThread neighborsMetadataSenderThread = new NeighborsMetaDataSenderThread(client.iPeer,
+        // Thread responsavel por enviar os metadados de peers vizinhos para outros
+        // peers vizinhos
+        NeighborsMetadataSenderThread neighborsMetadataSenderThread = new NeighborsMetadataSenderThread(client.iPeer,
                 client.socket, client.peerRecords, client.peerAddresses);
         neighborsMetadataSenderThread.start();
 
         // Thread responsavel por enviar os de peers vizinhos para os peers vizinhos
-        MetaDataVerifierThread metaDataVerifierThread = new MetaDataVerifierThread(client.iPeer, client.peerRecords);
+        MetadataVerifierThread metaDataVerifierThread = new MetadataVerifierThread(client.iPeer, client.peerRecords);
         metaDataVerifierThread.start();
     }
 

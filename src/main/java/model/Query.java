@@ -38,14 +38,16 @@ public class Query implements Serializable {
         this.ttl = ttl;
     }
 
-    public void decreaseTtl(){
+    public void decreaseTtl() {
         this.ttl--;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Query query = (Query) o;
         return clientId.equals(query.clientId);
     }
@@ -53,5 +55,10 @@ public class Query implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(clientId);
+    }
+
+    @Override
+    public String toString() {
+        return "Query [clientId=" + clientId + ", file=" + file + ", ttl=" + ttl + "]";
     }
 }

@@ -60,7 +60,7 @@ public class PeerListenerThread extends AbstractThread {
                 } else if (message.getType() == MessageType.CLIENT){
                     String content = message.getContent();
                     Query query = messageHandler.parseQueryMessage(content);
-                    new ClientMessageHandler(socket, getPeer(), peerRecords, queriesDone, query, semaphore).run();
+                    new ClientQueryHandlerThread(socket, getPeer(), peerRecords, queriesDone, query, semaphore).run();
                 }
 
                 // Clear the buffer after every message.

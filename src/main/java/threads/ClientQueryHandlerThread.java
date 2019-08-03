@@ -12,7 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-public class ClientMessageHandler extends AbstractThread {
+public class ClientQueryHandlerThread extends AbstractThread {
 
     private ArrayList<Query> queriesDone;
     private Query query;
@@ -20,7 +20,7 @@ public class ClientMessageHandler extends AbstractThread {
     private ArrayList<PeerRecord> peerRecords;
     private DatagramSocket socket;
 
-    public ClientMessageHandler(DatagramSocket socket, Peer iPeer, ArrayList<PeerRecord> peerRecords,
+    public ClientQueryHandlerThread(DatagramSocket socket, Peer iPeer, ArrayList<PeerRecord> peerRecords,
                                 ArrayList<Query> queries, Query query, Semaphore semaphore) {
         super(iPeer);
         this.socket = socket;
@@ -112,6 +112,6 @@ public class ClientMessageHandler extends AbstractThread {
 
     @Override
     public String getThreadName() {
-        return ClientMessageHandler.class.getSimpleName();
+        return ClientQueryHandlerThread.class.getSimpleName();
     }
 }

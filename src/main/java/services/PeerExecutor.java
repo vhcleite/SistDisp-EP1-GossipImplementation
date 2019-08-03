@@ -18,7 +18,7 @@ import threads.MyMetadataSenderThread;
 import threads.NeighborsMetadataSenderThread;
 import threads.PeerListenerThread;
 
-public class PeerClient {
+public class PeerExecutor {
 
     public String localHost;
     public DatagramSocket socket;
@@ -28,7 +28,7 @@ public class PeerClient {
     private ArrayList<PeerRecord> peerRecords = new ArrayList<PeerRecord>();
     private ArrayList<Query> queriesDone = new ArrayList<>();
 
-    public PeerClient(Integer localPeerPort, String remotePeersList) {
+    public PeerExecutor(Integer localPeerPort, String remotePeersList) {
         initSocket(localPeerPort);
         initPeer(localPeerPort);
         initPeerRecords(remotePeersList);
@@ -83,7 +83,7 @@ public class PeerClient {
         Integer localPeerPort = Integer.valueOf(args[0]);
         String remotePeersList = args[1];
 
-        PeerClient client = new PeerClient(localPeerPort, remotePeersList);
+        PeerExecutor client = new PeerExecutor(localPeerPort, remotePeersList);
 
         // Para thread funcionar é esperado que exista a pasta gossip_test_folder na
         // home do usuario

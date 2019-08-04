@@ -3,13 +3,13 @@ package threads;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import model.*;
+import model.Message;
+import model.MessageType;
+import model.Peer;
+import model.PeerRecord;
+import model.Query;
 import services.MessageHandler;
 
 public class PeerListenerThread extends AbstractThread {
@@ -22,7 +22,8 @@ public class PeerListenerThread extends AbstractThread {
 
     private Semaphore semaphore;
 
-    public PeerListenerThread(Peer iPeer, DatagramSocket socket, ArrayList<PeerRecord> peerRecords, ArrayList<Query> queriesDone) {
+    public PeerListenerThread(Peer iPeer, DatagramSocket socket, ArrayList<PeerRecord> peerRecords,
+            ArrayList<Query> queriesDone) {
         super(iPeer);
         this.socket = socket;
         this.peerRecords = peerRecords;
@@ -53,11 +54,11 @@ public class PeerListenerThread extends AbstractThread {
                 String validJsonString = messageHandler.getValidJsonString(messageString);
                 Message message = messageHandler.parseMessage(validJsonString);
 
-                if (message.getType() == MessageType.PEER){
+                if (message.getType() == MessageType.PEER) {
                     String content = message.getContent();
                     Peer recievedPeer = messageHandler.parsePeerMessage(content);
                     new PeerMessageHandlerThread(getPeer(), recievedPeer, peerRecords, semaphore).run();
-                } else if (message.getType() == MessageType.CLIENT){
+                } else if (message.getType() == MessageType.CLIENT) {
                     String content = message.getContent();
                     Query query = messageHandler.parseQueryMessage(content);
                     new ClientQueryHandlerThread(socket, getPeer(), peerRecords, queriesDone, query, semaphore).run();
@@ -72,10 +73,7 @@ public class PeerListenerThread extends AbstractThread {
         }
     }
 
-
-
-
     public String getThreadName() {
-        return "PeerListenerThread";
+        return PeerListenerThread.class.getSimpleName();
     }
 }

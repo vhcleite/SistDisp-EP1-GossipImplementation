@@ -54,6 +54,6 @@ public class MetadataBuilderThread extends AbstractThread {
 
     @Override
     public String getThreadName() {
-        return "MetadataBuilderThread";
+        return MetadataBuilderThread.class.getSimpleName();
     }
 }

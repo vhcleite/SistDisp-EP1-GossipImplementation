@@ -63,6 +63,6 @@ public class NeighborsMetadataSenderThread extends AbstractThread {
 
     @Override
     public String getThreadName() {
-        return "NeighborsMetadataSenderThread";
+        return NeighborsMetadataSenderThread.class.getSimpleName();
     }
 }

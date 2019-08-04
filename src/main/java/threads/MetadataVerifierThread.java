@@ -48,6 +48,6 @@ public class MetadataVerifierThread extends AbstractThread {
 
     @Override
     public String getThreadName() {
-        return "MetadataVerifierThread";
+        return MetadataVerifierThread.class.getSimpleName();
     }
 }

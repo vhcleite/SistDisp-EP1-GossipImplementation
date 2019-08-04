@@ -158,10 +158,10 @@ public class ClientQueryHandlerThread extends AbstractThread {
             }
 
             if (peerHasFileAddress == null) {
-                while (peerHasFileAddress.equals(iPeer.getAddress())) {
+                do {
                     peerHasFileAddress = peerRecords.get(LotteryService.getRandomInt(peerRecords.size())).getPeer()
                             .getAddress();
-                }
+                } while (peerHasFileAddress.equals(iPeer.getAddress()));
                 ThreadLog(String.format("Escolhido peer aleatorio [%s] para encaminhar query de arquivo[%s]",
                         peerHasFileAddress.toString(), queryFile));
             }

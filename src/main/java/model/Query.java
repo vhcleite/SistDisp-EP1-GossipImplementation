@@ -1,9 +1,8 @@
 package model;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class Query implements Serializable {
+public class Query {
     private ClientId clientId;
     private String fileName;
     private Integer ttl;

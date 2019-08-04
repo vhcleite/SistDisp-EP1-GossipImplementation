@@ -34,6 +34,9 @@ public class Peer {
     }
 
     public boolean hasFile(String file) {
+        if (metadata == null) {
+            return false;
+        }
         return this.metadata.getFolderContent().contains(file);
     }
 

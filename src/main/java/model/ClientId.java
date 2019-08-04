@@ -5,15 +5,15 @@ import java.util.Objects;
 
 public class ClientId {
     private Address address;
-    private Date timestamp;
+    private long timestamp;
 
     public ClientId(Address address) {
         this.address = address;
-        this.timestamp = new Date();
+        this.timestamp = new Date().getTime();
     }
 
     public String getToken() {
-        return String.format("%s:%s:%s", this.address.getIp(), this.address.getPort(), this.timestamp.getTime());
+        return String.format("%s:%s:%s", this.address.getIp(), this.address.getPort(), this.getTimestamp());
     }
 
     public Address getAddress() {
@@ -24,11 +24,11 @@ public class ClientId {
         this.address = address;
     }
 
-    public Date getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

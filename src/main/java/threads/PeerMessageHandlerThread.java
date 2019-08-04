@@ -1,12 +1,12 @@
 package threads;
 
-import model.Peer;
-import model.PeerRecord;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.Semaphore;
+
+import model.Peer;
+import model.PeerRecord;
 
 public class PeerMessageHandlerThread extends AbstractThread {
 
@@ -14,7 +14,8 @@ public class PeerMessageHandlerThread extends AbstractThread {
     private ArrayList<PeerRecord> peerRecords;
     private Semaphore semaphore;
 
-    public PeerMessageHandlerThread(Peer iPeer, Peer recievedPeer, ArrayList<PeerRecord> peerRecords, Semaphore semaphore) {
+    public PeerMessageHandlerThread(Peer iPeer, Peer recievedPeer, ArrayList<PeerRecord> peerRecords,
+            Semaphore semaphore) {
         super(iPeer);
         this.recievedPeer = recievedPeer;
         this.peerRecords = peerRecords;
@@ -36,10 +37,13 @@ public class PeerMessageHandlerThread extends AbstractThread {
                     if (savedPeerRecord.getReceivingDate() == null //
                             || newPeerRecord.getPeer().getMetadata() == null //
                             || newPeerRecord.getPeer().getMetadata()
-                            .isYoungerThan(savedPeerRecord.getPeer().getMetadata())) {
+                                    .isYoungerThan(savedPeerRecord.getPeer().getMetadata())) {
                         savedPeerRecord.setPeer(newPeerRecord.getPeer());
                         savedPeerRecord.setReceivingDate(newPeerRecord.getReceivingDate());
                         ThreadLog("Atualizado registro para:\r\n" + savedPeerRecord.toString());
+                    } else {
+                        ThreadLog("Metadados nao atualizados por serem mais antigos ou duplicados:\r\n"
+                                + savedPeerRecord.toString());
                     }
                     return;
                 }
@@ -56,9 +60,9 @@ public class PeerMessageHandlerThread extends AbstractThread {
                 semaphore.release();
             }
 
+        } else {
+            ThreadLog("");
         }
-
-        logPeerRecords(peerRecords);
     }
 
     @Override

@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 public class Message implements Serializable {
     private MessageType type;
-    private String Content;
+    private String content;
 
     public Message(MessageType type, String content) {
         this.type = type;
-        Content = content;
+        this.content = content;
     }
 
     public MessageType getType() {
@@ -20,10 +20,19 @@ public class Message implements Serializable {
     }
 
     public String getContent() {
-        return Content;
+        return content;
     }
 
     public void setContent(String content) {
-        Content = content;
+        this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "Message [type=" + type + ", Content=" + content + "]";
+    }
+
+    public boolean isFormatted() {
+        return this.type != null && this.content != null;
     }
 }

@@ -53,19 +53,24 @@ public class PeerListenerThread extends AbstractThread {
 
                 String validJsonString = messageHandler.getValidJsonString(messageString);
                 Message message = messageHandler.parseMessage(validJsonString);
-
-                if (message.getType() == MessageType.PEER) {
-                    String content = message.getContent();
-                    Peer recievedPeer = messageHandler.parsePeerMessage(content);
-                    new PeerMessageHandlerThread(getPeer(), recievedPeer, peerRecords, semaphore).run();
-                } else if (message.getType() == MessageType.CLIENT) {
-                    String content = message.getContent();
-                    Query query = messageHandler.parseQueryMessage(content);
-                    new ClientQueryHandlerThread(socket, getPeer(), peerRecords, queriesDone, query, semaphore).run();
+                if (message != null) {
+                    if (message.getType() == MessageType.PEER) {
+                        String content = message.getContent();
+                        Peer recievedPeer = messageHandler.parsePeerMessage(content);
+                        new PeerMessageHandlerThread(getPeer(), recievedPeer, peerRecords, semaphore).run();
+                    } else if (message.getType() == MessageType.CLIENT) {
+                        String content = message.getContent();
+                        Query query = messageHandler.parseQueryMessage(content);
+                        new ClientQueryHandlerThread(socket, getPeer(), peerRecords, queriesDone, query, semaphore)
+                                .run();
+                    }
+                } else {
+                    ThreadLog("Mensagem mal formatada");
                 }
 
                 // Clear the buffer after every message.
                 receiveByteArray = new byte[BUFFER_SIZE];
+                logPeerRecords(peerRecords);
             }
         } catch (Exception e) {
             ThreadLog("Erro em " + getThreadName());

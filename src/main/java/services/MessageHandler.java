@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import model.Message;
-import model.MessageType;
 import model.Peer;
 import model.Query;
 
@@ -17,10 +16,12 @@ public class MessageHandler {
         this.gson = gsonBuilder.setLenient().create();
     }
 
-
     public Message parseMessage(String jsonString) {
         try {
             Message message = gson.fromJson(jsonString, Message.class);
+            if (!message.isFormatted()) {
+                return null;
+            }
             return message;
         } catch (Exception e) {
             e.printStackTrace();

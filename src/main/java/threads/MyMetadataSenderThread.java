@@ -4,6 +4,8 @@ import java.net.DatagramSocket;
 import java.util.List;
 
 import model.Address;
+import model.Message;
+import model.MessageType;
 import model.Peer;
 import services.LotteryService;
 import services.MessageHandler;
@@ -35,7 +37,10 @@ public class MyMetadataSenderThread extends AbstractThread {
 
             try {
                 if (getPeer().getMetadata() != null) {
-                    MessageSenderService.sendMessage(socket, messageHandler.stringfy(getPeer()), addressToSend);
+
+                    Message message = new Message(MessageType.PEER, messageHandler.stringfy(getPeer()));
+
+                    MessageSenderService.sendMessage(socket, messageHandler.stringfy(message), addressToSend);
                     ThreadLog("Metadados enviados para " + addressToSend);
                 }
 

@@ -53,6 +53,7 @@ public class PeerListenerThread extends AbstractThread {
 
                 String validJsonString = messageHandler.getValidJsonString(messageString);
                 Message message = messageHandler.parseMessage(validJsonString);
+
                 if (message != null) {
                     if (message.getType() == MessageType.METADATA) {
                         String content = message.getContent();

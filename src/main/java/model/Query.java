@@ -5,12 +5,12 @@ import java.util.Objects;
 
 public class Query implements Serializable {
     private ClientId clientId;
-    private String file;
+    private String fileName;
     private Integer ttl;
 
     public Query(ClientId clientId, String file, Integer ttl) {
         this.clientId = clientId;
-        this.file = file;
+        this.fileName = file;
         this.ttl = ttl;
     }
 
@@ -22,12 +22,12 @@ public class Query implements Serializable {
         this.clientId = clientId;
     }
 
-    public String getFile() {
-        return file;
+    public String getFileName() {
+        return fileName;
     }
 
     public void setFile(String file) {
-        this.file = file;
+        this.fileName = file;
     }
 
     public Integer getTtl() {
@@ -38,7 +38,7 @@ public class Query implements Serializable {
         this.ttl = ttl;
     }
 
-    public void decreaseTtl() {
+    public void decreaseTTL() {
         this.ttl--;
     }
 
@@ -59,6 +59,6 @@ public class Query implements Serializable {
 
     @Override
     public String toString() {
-        return "Query [clientId=" + clientId + ", file=" + file + ", ttl=" + ttl + "]";
+        return "Query [clientId=" + clientId + ", file=" + fileName + ", ttl=" + ttl + "]";
     }
 }

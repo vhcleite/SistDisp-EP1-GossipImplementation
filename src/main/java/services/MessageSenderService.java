@@ -9,8 +9,7 @@ import model.Address;
 
 public class MessageSenderService {
 
-    public static void sendMessage(DatagramSocket sendSocket, String message, Address targetPeerAddress)
-            throws InterruptedException {
+    public static void sendMessage(DatagramSocket sendSocket, String message, Address targetPeerAddress) {
 
         try {
             InetAddress targetAddress = InetAddress.getByName(targetPeerAddress.getIp());
@@ -22,7 +21,11 @@ public class MessageSenderService {
 
             sendSocket.send(datagramPacket);
         } catch (IOException e) {
-            Thread.sleep(10);
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
             sendMessage(sendSocket, message, targetPeerAddress);
         }
     }

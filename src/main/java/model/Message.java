@@ -1,8 +1,6 @@
 package model;
 
-import java.io.Serializable;
-
-public class Message implements Serializable {
+public class Message {
     private MessageType type;
     private String content;
 

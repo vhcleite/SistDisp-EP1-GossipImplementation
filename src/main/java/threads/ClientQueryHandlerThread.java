@@ -1,9 +1,12 @@
 package threads;
 
-import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -29,6 +32,8 @@ public class ClientQueryHandlerThread extends AbstractThread {
     private ArrayList<PeerRecord> peerRecords;
     private DatagramSocket socket;
 
+    private MessageHandler messageHandler = new MessageHandler();
+
     public ClientQueryHandlerThread(DatagramSocket socket, Peer iPeer, ArrayList<PeerRecord> peerRecords,
             ArrayList<Query> queries, Query query, Semaphore semaphore) {
         super(iPeer);
@@ -44,17 +49,14 @@ public class ClientQueryHandlerThread extends AbstractThread {
         // TODO verificar se eh necessario implementar um contains
         if (!queriesDone.contains(query)) {
             ThreadLog(String.format("Recebida query [%s]", query));
-            Address clientAddress = query.getClientId().getAddress();
+            query.decreaseTTL();
 
-            query.decreaseTtl();
+            String queryFile = query.getFileName();
 
-            String queryFile = query.getFile();
-            Peer iPeer = getPeer();
-
-            if (iPeer.hasFile(queryFile)) {
-                sendFileToClient(clientAddress, queryFile, iPeer);
+            if (getPeer().hasFile(queryFile)) {
+                sendFileToClient(query);
             } else if (query.getTtl() > 0) {
-                fowardQuery(queryFile, iPeer);
+                fowardQuery(queryFile, getPeer());
             } else {
                 ThreadLog(String.format("TTL da query zerado. Não repassando query"));
             }
@@ -69,38 +71,72 @@ public class ClientQueryHandlerThread extends AbstractThread {
         MessageHandler messageHandler = new MessageHandler();
         Message message = new Message(MessageType.QUERY, messageHandler.stringfy(query));
 
-        try {
-            MessageSenderService.sendMessage(socket, messageHandler.stringfy(message), nextPeerAddress);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        MessageSenderService.sendMessage(socket, messageHandler.stringfy(message), nextPeerAddress);
     }
 
-    private void sendFileToClient(Address clientAddress, String queryFile, Peer iPeer) {
+    private void sendFileToClient(Query query) {
+
+        Address clientAddress = query.getClientId().getAddress();
+        String filePath = getPeer().getMonitoringFolderName() + "/" + query.getFileName();
+
         try {
-            Socket socket = new Socket(InetAddress.getByName(clientAddress.getIp()), clientAddress.getPort());
+            // Abrir socket na porta atual usada pelo peer + 1
+            Socket socket = new Socket(InetAddress.getByName(clientAddress.getIp()), clientAddress.getPort() + 1);
 
-            File file = getFile(queryFile, iPeer);
-            FileInputStream fileStream = new FileInputStream(file);
-
-            byte[] byteArray = new byte[(int) file.length()];
-            BufferedInputStream bufferedStream = new BufferedInputStream(fileStream);
-            bufferedStream.read(byteArray, 0, byteArray.length);
-
-            OutputStream os = socket.getOutputStream();
-            os.write(byteArray, 0, byteArray.length);
-            ThreadLog(String.format("Enviando arquivo %s para o client %s", queryFile, clientAddress.toString()));
-            os.flush();
+            Message serverResponse = getPermissionToSendFile(query, socket);
+            if (serverResponse != null) {
+                if (serverResponse.getType() == MessageType.SEND_REQUEST_ALLOWED) {
+                    // Enviar o arquivo
+                    sendFile(clientAddress, filePath, socket);
+                } else if (serverResponse.getType() == MessageType.SEND_REQUEST_NOT_ALLOWED)
+                    ThreadLog("Cliente informou que nao precisa mais do arquivo");
+                else {
+                    ThreadLog("Resposta fora do protocolo");
+                }
+            } else {
+                ThreadLog("Resposta mal formatada do cliente");
+            }
             socket.close();
-
-            ThreadLog(String.format("Arquivo %s enviado com sucesso!", queryFile));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private File getFile(String queryFile, Peer iPeer) {
-        String gossipFolder = getPeer().getMonitoringFolderName() + "/" + queryFile;
+    private void sendFile(Address clientAddress, String filePath, Socket socket)
+            throws FileNotFoundException, IOException {
+        ThreadLog(String.format("Enviando arquivo %s para o client %s", filePath, clientAddress.toString()));
+
+        FileInputStream fis = new FileInputStream(filePath);
+        OutputStream out = socket.getOutputStream();
+        byte b[] = new byte[1000];
+
+        while ((fis.read(b)) > 0) {
+            out.write(b, 0, b.length);
+        }
+
+        out.close();
+        fis.close();
+
+        ThreadLog(String.format("Arquivo %s enviado com sucesso!", filePath));
+    }
+
+    private Message getPermissionToSendFile(Query query, Socket socket) throws IOException {
+        OutputStream os = socket.getOutputStream();
+        DataOutputStream socketOut = new DataOutputStream(os);
+
+        InputStreamReader isrServer = new InputStreamReader(socket.getInputStream());
+        BufferedReader socketIn = new BufferedReader(isrServer);
+
+        // Envia mensagem de requisicao de permissao de envio
+        Message message = new Message(MessageType.QUERY_SEND_REQUEST, messageHandler.stringfy(query));
+        socketOut.writeBytes(messageHandler.stringfy(message));
+
+        Message serverResponse = messageHandler.parseMessage(socketIn.readLine());
+        return serverResponse;
+    }
+
+    private File getFile(String fileName) {
+        String gossipFolder = getPeer().getMonitoringFolderName() + "/" + fileName;
         return new File(gossipFolder);
     }
 

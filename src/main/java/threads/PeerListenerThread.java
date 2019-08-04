@@ -54,11 +54,11 @@ public class PeerListenerThread extends AbstractThread {
                 String validJsonString = messageHandler.getValidJsonString(messageString);
                 Message message = messageHandler.parseMessage(validJsonString);
                 if (message != null) {
-                    if (message.getType() == MessageType.PEER) {
+                    if (message.getType() == MessageType.METADATA) {
                         String content = message.getContent();
                         Peer recievedPeer = messageHandler.parsePeerMessage(content);
                         new PeerMessageHandlerThread(getPeer(), recievedPeer, peerRecords, semaphore).run();
-                    } else if (message.getType() == MessageType.CLIENT) {
+                    } else if (message.getType() == MessageType.QUERY) {
                         String content = message.getContent();
                         Query query = messageHandler.parseQueryMessage(content);
                         new ClientQueryHandlerThread(socket, getPeer(), peerRecords, queriesDone, query, semaphore)

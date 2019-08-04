@@ -27,8 +27,8 @@
         <configuration>
           <mainClass>services.PeerExecutor</mainClass>
           <arguments>
-            <argument>9000</argument>
-            <argument>127.0.0.1:9001</argument>
+            <argument>9001</argument>
+            <argument>127.0.1.1:9000</argument>
           </arguments>
         </configuration>
       </plugin>

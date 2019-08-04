@@ -67,7 +67,7 @@ public class ClientQueryHandlerThread extends AbstractThread {
     private void fowardQuery(String queryFile, Peer iPeer) {
         Address nextPeerAddress = getNextPeer(queryFile, iPeer);
         MessageHandler messageHandler = new MessageHandler();
-        Message message = new Message(MessageType.CLIENT, messageHandler.stringfy(query));
+        Message message = new Message(MessageType.QUERY, messageHandler.stringfy(query));
 
         try {
             MessageSenderService.sendMessage(socket, messageHandler.stringfy(message), nextPeerAddress);

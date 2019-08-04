@@ -38,7 +38,7 @@ public class MyMetadataSenderThread extends AbstractThread {
             try {
                 if (getPeer().getMetadata() != null) {
 
-                    Message message = new Message(MessageType.PEER, messageHandler.stringfy(getPeer()));
+                    Message message = new Message(MessageType.METADATA, messageHandler.stringfy(getPeer()));
 
                     MessageSenderService.sendMessage(socket, messageHandler.stringfy(message), addressToSend);
                     ThreadLog("Metadados enviados para " + addressToSend);

@@ -49,7 +49,7 @@ public class NeighborsMetadataSenderThread extends AbstractThread {
 
             try {
                 if (getPeer().getMetadata() != null) {
-                    Message message = new Message(MessageType.PEER, messageHandler.stringfy(recordToSend.getPeer()));
+                    Message message = new Message(MessageType.METADATA, messageHandler.stringfy(recordToSend.getPeer()));
                     MessageSenderService.sendMessage(socket, messageHandler.stringfy(message), addressToSend);
                     ThreadLog(String.format("Metadados de %s enviados para %s", recordToSend.getPeer().getAddress(),
                             addressToSend));

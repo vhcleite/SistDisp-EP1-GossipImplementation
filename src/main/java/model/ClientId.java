@@ -7,9 +7,9 @@ public class ClientId {
     private Address address;
     private Date timestamp;
 
-    public ClientId(Address address, Date timestamp) {
+    public ClientId(Address address) {
         this.address = address;
-        this.timestamp = timestamp;
+        this.timestamp = new Date();
     }
 
     public String getToken() {

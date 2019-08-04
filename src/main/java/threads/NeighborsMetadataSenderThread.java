@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Address;
+import model.Message;
+import model.MessageType;
 import model.Peer;
 import model.PeerRecord;
 import services.LotteryService;
@@ -47,8 +49,8 @@ public class NeighborsMetadataSenderThread extends AbstractThread {
 
             try {
                 if (getPeer().getMetadata() != null) {
-                    MessageSenderService.sendMessage(socket, messageHandler.stringfy(recordToSend.getPeer()),
-                            addressToSend);
+                    Message message = new Message(MessageType.PEER, messageHandler.stringfy(recordToSend.getPeer()));
+                    MessageSenderService.sendMessage(socket, messageHandler.stringfy(message), addressToSend);
                     ThreadLog(String.format("Metadados de %s enviados para %s", recordToSend.getPeer().getAddress(),
                             addressToSend));
                 }

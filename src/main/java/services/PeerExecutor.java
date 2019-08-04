@@ -38,9 +38,7 @@ public class PeerExecutor {
         try {
             this.localHost = InetAddress.getLocalHost().getHostAddress();
             this.iPeer = new Peer(localHost, localPeerPort);
-            String home = System.getProperty("user.home");
-            String gossipFolder = home + "/" + localPeerPort;
-            new File(gossipFolder).mkdirs();
+            new File(iPeer.getMonitoringFolderName()).mkdirs();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

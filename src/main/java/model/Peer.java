@@ -33,14 +33,21 @@ public class Peer {
         return "ADDRESS -> " + getAddress().toString() + "/\r\n                     " + Objects.toString(getMetadata());
     }
 
-    public boolean hasFile(String file){
+    public boolean hasFile(String file) {
         return this.metadata.getFolderContent().contains(file);
+    }
+
+    public String getMonitoringFolderName() {
+        return String.format("%s/peer-%s_%d-repository", System.getProperty("user.home"), getAddress().getIp(),
+                getAddress().getPort());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Peer peer = (Peer) o;
         return address.equals(peer.address);
     }

@@ -48,7 +48,7 @@ public class MyMetadataSenderThread extends AbstractThread {
 
     @Override
     public String getThreadName() {
-        return "MyMetadataThreadName";
+        return MyMetadataSenderThread.class.getSimpleName();
     }
 
 }

@@ -21,8 +21,7 @@ public class MetadataBuilderThread extends AbstractThread {
 
         while (true) {
 
-            String home = System.getProperty("user.home");
-            listAllFiles(home + "/" + getPeer().getAddress().getIp());
+            listAllFiles(getPeer().getMonitoringFolderName());
             ThreadLog(getPeer().getMetadata().toString());
 
             try {

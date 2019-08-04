@@ -100,8 +100,7 @@ public class ClientQueryHandlerThread extends AbstractThread {
     }
 
     private File getFile(String queryFile, Peer iPeer) {
-        String home = System.getProperty("user.home");
-        String gossipFolder = home + "/" + iPeer.getAddress().getIp() + "/" + queryFile;
+        String gossipFolder = getPeer().getMonitoringFolderName() + "/" + queryFile;
         return new File(gossipFolder);
     }
 

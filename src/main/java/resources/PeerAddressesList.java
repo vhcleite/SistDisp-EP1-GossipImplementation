@@ -8,7 +8,7 @@ import model.Address;
 public class PeerAddressesList {
 
     public static List<Address> adresses = Arrays.asList(//
-            new Address("127.0.0.1", 9000), //
+//            new Address("127.0.0.1", 9000), //
             new Address("127.0.0.1", 9002));
 
     public static int getSize() {

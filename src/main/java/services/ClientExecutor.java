@@ -18,8 +18,8 @@ import threads.QueryResponseThread;
 public class ClientExecutor {
 
     public final static int TTL = 2;
-    public final static long TIMEOUT = 5000;
-    public final static int LOCAL_PORT = 3000;
+    public final static long TIMEOUT = 50 * 1000;
+    public final static int LOCAL_PORT = 3001;
     public final static String LOCAL_IP = "127.0.0.1";
     private static final long DELAY = 500;
 
@@ -30,7 +30,7 @@ public class ClientExecutor {
         String fileName;
         BufferedReader ob = new BufferedReader(new InputStreamReader(System.in));
         while (!(fileName = getInputFromUser(ob)).equals("exit")) {
-            System.out.println("Searching for: " + fileName);
+            System.out.println("Procurando por: " + fileName);
 
             Query query = new Query(new ClientId(new Address(LOCAL_IP, LOCAL_PORT)), fileName, TTL);
 
@@ -53,9 +53,9 @@ public class ClientExecutor {
                     break;
                 }
             }
-
-            queryReponseThread.setShouldRun(false);
             serverSocket.close();
+            queryReponseThread.setShouldRun(false);
+            Thread.sleep(500);
         }
 
         System.out.println("Saindo do ClientExecutor");

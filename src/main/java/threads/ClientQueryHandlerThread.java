@@ -2,7 +2,6 @@ package threads;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -81,7 +80,7 @@ public class ClientQueryHandlerThread extends AbstractThread {
 
         try {
             // Abrir socket na porta atual usada pelo peer + 1
-            Socket socket = new Socket(InetAddress.getByName(clientAddress.getIp()), clientAddress.getPort() + 1);
+            Socket socket = new Socket(InetAddress.getByName(clientAddress.getIp()), clientAddress.getPort());
 
             Message serverResponse = getPermissionToSendFile(query, socket);
             if (serverResponse != null) {
@@ -110,9 +109,13 @@ public class ClientQueryHandlerThread extends AbstractThread {
         OutputStream out = socket.getOutputStream();
         byte b[] = new byte[1000];
 
-        while ((fis.read(b)) > 0) {
-            out.write(b, 0, b.length);
+        int read = 0;
+        int total = 0;
+        while ((read = fis.read(b)) > 0) {
+            total += read;
+            out.write(b, 0, read);
         }
+        ThreadLog(String.format("Foram enviado %d bytes", total));
 
         out.close();
         fis.close();
@@ -121,23 +124,19 @@ public class ClientQueryHandlerThread extends AbstractThread {
     }
 
     private Message getPermissionToSendFile(Query query, Socket socket) throws IOException {
-        OutputStream os = socket.getOutputStream();
-        DataOutputStream socketOut = new DataOutputStream(os);
 
-        InputStreamReader isrServer = new InputStreamReader(socket.getInputStream());
-        BufferedReader socketIn = new BufferedReader(isrServer);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
         // Envia mensagem de requisicao de permissao de envio
         Message message = new Message(MessageType.QUERY_SEND_REQUEST, messageHandler.stringfy(query));
-        socketOut.writeBytes(messageHandler.stringfy(message));
+        out.writeBytes(messageHandler.stringfy(message) + "\n");
+        ThreadLog("Requisicao de envio de arquivo enviada: " + message);
 
-        Message serverResponse = messageHandler.parseMessage(socketIn.readLine());
+        String messageResponseString = in.readLine();
+        ThreadLog("Resposta da requisicao recebida: " + messageResponseString);
+        Message serverResponse = messageHandler.parseMessage(messageResponseString);
         return serverResponse;
-    }
-
-    private File getFile(String fileName) {
-        String gossipFolder = getPeer().getMonitoringFolderName() + "/" + fileName;
-        return new File(gossipFolder);
     }
 
     private Address getNextPeer(String queryFile, Peer iPeer) {

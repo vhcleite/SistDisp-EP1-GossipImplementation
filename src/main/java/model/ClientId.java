@@ -1,7 +1,6 @@
 package model;
 
 import java.util.Date;
-import java.util.Objects;
 
 public class ClientId {
     private Address address;
@@ -33,22 +32,35 @@ public class ClientId {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        ClientId clientId = (ClientId) o;
-        return Objects.equals(address, clientId.address) && Objects.equals(timestamp, clientId.timestamp);
+    public String toString() {
+        return "ClientId [address=" + address + ", timestamp=" + timestamp + "]";
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(address, timestamp);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
+        result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
+        return result;
     }
 
     @Override
-    public String toString() {
-        return "ClientId [address=" + address + ", timestamp=" + timestamp + "]";
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ClientId other = (ClientId) obj;
+        if (address == null) {
+            if (other.address != null)
+                return false;
+        } else if (!address.equals(other.address))
+            return false;
+        if (timestamp != other.timestamp)
+            return false;
+        return true;
     }
 }

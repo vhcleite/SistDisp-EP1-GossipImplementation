@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Objects;
-
 public class Query {
     private ClientId clientId;
     private String fileName;
@@ -42,22 +40,38 @@ public class Query {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Query query = (Query) o;
-        return clientId.equals(query.clientId);
+    public String toString() {
+        return "Query [clientId=" + clientId + ", file=" + fileName + ", ttl=" + ttl + "]";
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(clientId);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((clientId == null) ? 0 : clientId.hashCode());
+        result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
+        return result;
     }
 
     @Override
-    public String toString() {
-        return "Query [clientId=" + clientId + ", file=" + fileName + ", ttl=" + ttl + "]";
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Query other = (Query) obj;
+        if (clientId == null) {
+            if (other.clientId != null)
+                return false;
+        } else if (!clientId.equals(other.clientId))
+            return false;
+        if (fileName == null) {
+            if (other.fileName != null)
+                return false;
+        } else if (!fileName.equals(other.fileName))
+            return false;
+        return true;
     }
 }

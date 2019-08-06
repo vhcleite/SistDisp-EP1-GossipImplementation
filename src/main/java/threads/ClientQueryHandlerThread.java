@@ -59,7 +59,8 @@ public class ClientQueryHandlerThread extends AbstractThread {
             } else {
                 ThreadLog(String.format("TTL da query zerado. Nao repassando query"));
             }
-
+	    // TODO verficar se esta correto
+	    queriesDone.add(query);
         } else {
             ThreadLog(String.format("A query %s ja foi realizada previamente", query.getClientId().getToken()));
         }

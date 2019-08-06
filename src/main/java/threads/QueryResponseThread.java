@@ -35,7 +35,7 @@ public class QueryResponseThread extends Thread {
             try {
                 int bytesRead = 0;
                 Socket socket = serverSocket.accept();
-                System.out.println("conexao feita com: " + socket.getInetAddress());
+                System.out.println("Recebendo requisição para transferência de: " + socket.getInetAddress());
 
                 InputStream is = socket.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -57,7 +57,7 @@ public class QueryResponseThread extends Thread {
                     if (query.equals(getQuery())) {
                         System.out.println("Consulta valida. Permitir envio de arquivo");
                         requestResponse = new Message(MessageType.SEND_REQUEST_ALLOWED, "");
-
+			
                     } else {
                         System.out.println("Consulta Invalida. Nao permitir envio de arquivo");
                         requestResponse = new Message(MessageType.SEND_REQUEST_NOT_ALLOWED, "");
@@ -71,7 +71,7 @@ public class QueryResponseThread extends Thread {
                     int currentTotal = bytesRead;
 
                     byte[] bytearray = new byte[100 * 1024 * 1024];
-
+		    
                     FileOutputStream fos = new FileOutputStream(getQuery().getFileName());
                     BufferedOutputStream bos = new BufferedOutputStream(fos);
 

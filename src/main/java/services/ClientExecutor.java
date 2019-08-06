@@ -30,13 +30,13 @@ public class ClientExecutor {
         String fileName;
         BufferedReader ob = new BufferedReader(new InputStreamReader(System.in));
         while (!(fileName = getInputFromUser(ob)).equals("exit")) {
-            System.out.println("Procurando por: " + fileName);
 
             Query query = new Query(new ClientId(new Address(LOCAL_IP, LOCAL_PORT)), fileName, TTL);
 
             Address address = getRandomAddress();
+	    System.out.println("Procurando por: " + fileName + ", no peer " + address);
             sendQuerytoAddress(query, address);
-
+		
             ServerSocket serverSocket = new ServerSocket(LOCAL_PORT);
             QueryResponseThread queryReponseThread = new QueryResponseThread(serverSocket, query);
             queryReponseThread.start();

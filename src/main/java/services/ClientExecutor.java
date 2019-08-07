@@ -17,15 +17,23 @@ import threads.QueryResponseThread;
 
 public class ClientExecutor {
 
-//    public final static int TTL = 2;
-//    public final static long TIMEOUT = 50 * 1000;
-    public final static int LOCAL_PORT = 3001;
-    public final static String LOCAL_IP = "127.0.0.1";
     private static final long DELAY = 500;
 
     public static MessageHandler mHandler = new MessageHandler();
 
     public static void main(String args[]) throws IOException, InterruptedException {
+
+        if (args.length != 2) {
+            System.out.println("Os argumento são: ");
+            System.out.println("(1) endenco do peer local");
+            System.out.println("(2) lista de ip1:porta1,ip2:porta2 separados por vírgulas dos peers remotos");
+        }
+
+        String localAddrString = args[0];
+        String remotePeersList = args[1];
+
+        PeerAddressesList peerAddressesList = new PeerAddressesList(remotePeersList);
+        Address localAddr = PeerAddressesList.getAddressFromString(localAddrString);
 
         String fileName;
         BufferedReader ob = new BufferedReader(new InputStreamReader(System.in));
@@ -33,13 +41,13 @@ public class ClientExecutor {
             int TTL = Integer.valueOf(getInputFromUser(ob, "With TTL: "));
             long TIMEOUT = Long.valueOf(getInputFromUser(ob, "And timeout in seconds: ")) * 1000;
 
-            Query query = new Query(new ClientId(new Address(LOCAL_IP, LOCAL_PORT)), fileName, TTL);
+            Query query = new Query(new ClientId(localAddr), fileName, TTL);
 
-            Address address = getRandomAddress();
+            Address address = getRandomAddress(peerAddressesList);
             System.out.println("Procurando por: " + fileName + ", no peer " + address);
-            sendQuerytoAddress(query, address);
+            sendQuerytoAddress(query, address, localAddr.getPort());
 
-            ServerSocket serverSocket = new ServerSocket(LOCAL_PORT);
+            ServerSocket serverSocket = new ServerSocket(localAddr.getPort());
             QueryResponseThread queryReponseThread = new QueryResponseThread(serverSocket, query);
             queryReponseThread.start();
 
@@ -63,8 +71,8 @@ public class ClientExecutor {
         System.out.println("Saindo do ClientExecutor");
     }
 
-    private static void sendQuerytoAddress(Query query, Address targetAddress) throws SocketException {
-        DatagramSocket socket = new DatagramSocket(LOCAL_PORT);
+    private static void sendQuerytoAddress(Query query, Address targetAddress, int localPort) throws SocketException {
+        DatagramSocket socket = new DatagramSocket(localPort);
 
         Message message = new Message(MessageType.QUERY, mHandler.stringfy(query));
         MessageSenderService.sendMessage(socket, mHandler.stringfy(message), targetAddress);
@@ -73,8 +81,8 @@ public class ClientExecutor {
         socket.close();
     }
 
-    private static Address getRandomAddress() {
-        return PeerAddressesList.getAddress(LotteryService.getRandomInt(PeerAddressesList.getSize()));
+    private static Address getRandomAddress(PeerAddressesList peerAddressesList) {
+        return peerAddressesList.getAddress(LotteryService.getRandomInt(peerAddressesList.getSize()));
     }
 
     private static String getInputFromUser(BufferedReader ob, String message) {

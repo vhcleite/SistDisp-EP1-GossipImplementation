@@ -1,15 +1,33 @@
 package resources;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import model.Address;
 
 public class PeerAddressesList {
 
-    public static List<Address> adresses = Arrays.asList(//
-//            new Address("127.0.0.1", 9000), //
-            new Address("127.0.0.1", 9002));
+    public static List<Address> adresses;
+
+    public PeerAddressesList(String remotePeersList) {
+        this.adresses = getAddressesFromString(remotePeersList);
+    }
+
+    public static List<Address> getAddressesFromString(String remotePeersList) {
+        List<Address> addresses = new ArrayList<>();
+        String[] split = remotePeersList.split(",");
+
+        for (String address : split) {
+            Address addressFromString = getAddressFromString(address);
+            addresses.add(addressFromString);
+        }
+        return addresses;
+    }
+
+    public static Address getAddressFromString(String address) {
+        String[] addressArray = address.split(":");
+        return new Address(addressArray[0], Integer.valueOf(addressArray[1]));
+    }
 
     public static int getSize() {
         return adresses.size();

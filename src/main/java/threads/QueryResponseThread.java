@@ -85,18 +85,18 @@ public class QueryResponseThread extends Thread {
 
         FileOutputStream fos = new FileOutputStream(getQuery().getFileName());
         BufferedOutputStream bos = new BufferedOutputStream(fos);
-        System.out.println("Download status:");
+        System.out.print("Baixando arquivo");
         do {
             bytesRead = is.read(bytearray, currentTotal, (bytearray.length - currentTotal));
-//            System.out.println("Read: " + bytesRead + " bytes");
             if (bytesRead >= 0) {
                 currentTotal += bytesRead;
-                System.out.println((currentTotal/1024) + " Kbytes");
+//                System.out.println((currentTotal/1024) + " Kbytes");
+                System.out.print(".");
             }
         } while ((bytesRead > -1) && getShouldRun());
 
         if (bytesRead < 0) {
-            System.out.println(String.format("Download finalizado. Foram baixados %s bytes", currentTotal));
+            System.out.println(String.format("\nDownload finalizado. Foram baixados %s bytes", currentTotal));
         }
 
         bos.write(bytearray, 0, currentTotal);

@@ -18,6 +18,8 @@ import threads.MyMetadataSenderThread;
 import threads.NeighborsMetadataSenderThread;
 import threads.PeerListenerThread;
 
+import static resources.PeerAddressesList.*;
+
 public class PeerExecutor {
 
     public String localHost;
@@ -28,16 +30,16 @@ public class PeerExecutor {
     private ArrayList<PeerRecord> peerRecords = new ArrayList<PeerRecord>();
     private ArrayList<Query> queriesDone = new ArrayList<>();
 
-    public PeerExecutor(Integer localPeerPort, String remotePeersList) {
-        initSocket(localPeerPort);
-        initPeer(localPeerPort);
+    public PeerExecutor(Address localAddr, String remotePeersList) {
+        initSocket(localAddr);
+        initPeer(localAddr);
         initPeerRecords(remotePeersList);
     }
 
-    private void initPeer(Integer localPeerPort) {
+    private void initPeer(Address localAddr) {
         try {
             this.localHost = InetAddress.getLocalHost().getHostAddress();
-            this.iPeer = new Peer(localHost, localPeerPort);
+            this.iPeer = new Peer(localAddr.getIp(), localAddr.getPort());
             new File(iPeer.getMonitoringFolderName()).mkdirs();
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -46,13 +48,7 @@ public class PeerExecutor {
 
     private void initPeerRecords(String remotePeersList) {
 
-        List<Address> addresses = new ArrayList<>();
-        String[] split = remotePeersList.split(",");
-
-        for (String address : split) {
-            String[] addressArray = address.split(":");
-            addresses.add(new Address(addressArray[0], Integer.valueOf(addressArray[1])));
-        }
+        List<Address> addresses = getAddressesFromString(remotePeersList);
 
         this.peerAddresses = addresses;
 
@@ -61,9 +57,11 @@ public class PeerExecutor {
         }
     }
 
-    private void initSocket(Integer localPeerPort) {
+
+
+    private void initSocket(Address localAddr) {
         try {
-            this.socket = new DatagramSocket(localPeerPort);
+            this.socket = new DatagramSocket(localAddr.getPort());
         } catch (SocketException e) {
             e.printStackTrace();
             System.out.println("Não foi possível inicializar o socket");
@@ -79,10 +77,10 @@ public class PeerExecutor {
             System.exit(0);
         }
 
-        Integer localPeerPort = Integer.valueOf(args[0]);
+        Address localAddr = getAddressFromString(args[0]);
         String remotePeersList = args[1];
 
-        PeerExecutor client = new PeerExecutor(localPeerPort, remotePeersList);
+        PeerExecutor client = new PeerExecutor(localAddr, remotePeersList);
 
         // Para thread funcionar é esperado que exista a pasta gossip_test_folder na
         // home do usuario

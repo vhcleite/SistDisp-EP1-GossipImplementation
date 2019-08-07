@@ -34,7 +34,7 @@ public class ClientQueryHandlerThread extends AbstractThread {
     private MessageHandler messageHandler = new MessageHandler();
 
     public ClientQueryHandlerThread(DatagramSocket socket, Peer iPeer, ArrayList<PeerRecord> peerRecords,
-            ArrayList<Query> queries, Query query, Semaphore semaphore) {
+                                    ArrayList<Query> queries, Query query, Semaphore semaphore) {
         super(iPeer);
         this.socket = socket;
         this.peerRecords = peerRecords;
@@ -55,20 +55,20 @@ public class ClientQueryHandlerThread extends AbstractThread {
             if (getPeer().hasFile(queryFile)) {
                 sendFileToClient(query);
             } else if (query.getTtl() > 0) {
-		fowardQuery(queryFile, getPeer());
+                fowardQuery(queryFile, getPeer());
             } else {
                 ThreadLog(String.format("TTL da query zerado. Nao repassando query"));
             }
-	    // TODO verficar se esta correto
-	    queriesDone.add(query);
+            // TODO verficar se esta correto
+            queriesDone.add(query);
         } else {
-            ThreadLog(String.format("A query %s ja foi realizada previamente", query.getClientId().getToken()));
+            ThreadLog(String.format("A query %s ja foi realizada previamente, matando query...", query.getClientId().getToken()));
         }
     }
 
     private void fowardQuery(String queryFile, Peer iPeer) {
         Address nextPeerAddress = getNextPeer(queryFile, iPeer);
-	ThreadLog(String.format("Nao tenho o arquivo %s, encaminhando para %s",queryFile, nextPeerAddress))
+        ThreadLog(String.format("Nao tenho o arquivo %s, encaminhando para %s", queryFile, nextPeerAddress));
         MessageHandler messageHandler = new MessageHandler();
         Message message = new Message(MessageType.QUERY, messageHandler.stringfy(query));
 
@@ -88,7 +88,7 @@ public class ClientQueryHandlerThread extends AbstractThread {
             if (serverResponse != null) {
                 if (serverResponse.getType() == MessageType.SEND_REQUEST_ALLOWED) {
                     // Enviar o arquivo
-			    sendFile(clientAddress, filePath, socket);
+                    sendFile(clientAddress, filePath, socket);
                 } else if (serverResponse.getType() == MessageType.SEND_REQUEST_NOT_ALLOWED)
                     ThreadLog("Cliente informou que nao precisa mais do arquivo");
                 else {

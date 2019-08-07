@@ -19,8 +19,10 @@ public class QueryResponseThread extends Thread {
 
     private ServerSocket serverSocket;
     private Query query;
-    private boolean isDownloadComplete = false;
+    private boolean isDownloading = false;
+    private boolean isDownloadCompleted = false;
     private boolean shouldRun = true;
+    private MessageHandler mHandler;
 
     public QueryResponseThread(ServerSocket serverSocket, Query query) {
         super();
@@ -33,7 +35,6 @@ public class QueryResponseThread extends Thread {
 
         while (getShouldRun()) {
             try {
-                int bytesRead = 0;
                 Socket socket = serverSocket.accept();
                 System.out.println("Recebendo requisição para transferência de: " + socket.getInetAddress());
 
@@ -43,7 +44,7 @@ public class QueryResponseThread extends Thread {
                 String peerInput = br.readLine();
                 System.out.println("peerInput: " + peerInput);
 
-                MessageHandler mHandler = new MessageHandler();
+                mHandler = new MessageHandler();
                 Message message = mHandler.parseMessage(peerInput);
                 System.out.println("Message: " + message);
 
@@ -57,52 +58,61 @@ public class QueryResponseThread extends Thread {
                     if (query.equals(getQuery())) {
                         System.out.println("Consulta valida. Permitir envio de arquivo");
                         requestResponse = new Message(MessageType.SEND_REQUEST_ALLOWED, "");
-			
+                        responseDownloadRequest(out, requestResponse);
+                        System.out.println("Realizando download");
+                        isDownloading = true;
+                        downloadFile(is);
+                        isDownloadCompleted = true;
                     } else {
                         System.out.println("Consulta Invalida. Nao permitir envio de arquivo");
                         requestResponse = new Message(MessageType.SEND_REQUEST_NOT_ALLOWED, "");
+                        responseDownloadRequest(out, requestResponse);
                     }
-
-                    String requestResponseString = mHandler.stringfy(requestResponse) + "\n";
-                    out.writeBytes(requestResponseString);
-                    System.out.println("Resposta da requisicao enviada: " + requestResponseString);
-
-                    bytesRead = 0;
-                    int currentTotal = bytesRead;
-
-                    byte[] bytearray = new byte[100 * 1024 * 1024];
-		    
-                    FileOutputStream fos = new FileOutputStream(getQuery().getFileName());
-                    BufferedOutputStream bos = new BufferedOutputStream(fos);
-
-                    do {
-                        bytesRead = is.read(bytearray, currentTotal, (bytearray.length - currentTotal));
-                        System.out.println("Read: " + bytesRead + " bytes");
-                        if (bytesRead >= 0) {
-                            currentTotal += bytesRead;
-                            System.out.println("Download status: " + currentTotal + " bytes");
-                        }
-                    } while ((bytesRead > -1) && getShouldRun());
-
-                    if (bytesRead < 0) {
-                        System.out.println(String.format("Download finalizado. Foram baixados %s bytes", currentTotal));
-                        isDownloadComplete = true;
-                    }
-
-                    bos.write(bytearray, 0, currentTotal);
-                    bos.flush();
-                    bos.close();
-                    fos.close();
                 }
-
             } catch (IOException e) {
                 System.out.println("Socket fechado");
+            } finally {
+                isDownloading = false;
             }
         }
     }
 
+    private void downloadFile(InputStream is) throws IOException {
+        int bytesRead = 0;
+        int currentTotal = bytesRead;
+
+        byte[] bytearray = new byte[200 * 1024 * 1024];
+
+        FileOutputStream fos = new FileOutputStream(getQuery().getFileName());
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        System.out.println("Download status:");
+        do {
+            bytesRead = is.read(bytearray, currentTotal, (bytearray.length - currentTotal));
+//            System.out.println("Read: " + bytesRead + " bytes");
+            if (bytesRead >= 0) {
+                currentTotal += bytesRead;
+                System.out.println((currentTotal/1024) + " Kbytes");
+            }
+        } while ((bytesRead > -1) && getShouldRun());
+
+        if (bytesRead < 0) {
+            System.out.println(String.format("Download finalizado. Foram baixados %s bytes", currentTotal));
+        }
+
+        bos.write(bytearray, 0, currentTotal);
+        bos.flush();
+        bos.close();
+        fos.close();
+    }
+
+    private void responseDownloadRequest(DataOutputStream out, Message requestResponse) throws IOException {
+        String requestResponseString = mHandler.stringfy(requestResponse) + "\n";
+        out.writeBytes(requestResponseString);
+        System.out.println("Resposta da requisicao enviada: " + requestResponseString);
+    }
+
     public boolean isDownloadComplete() {
-        return isDownloadComplete;
+        return isDownloadCompleted;
     }
 
     public boolean getShouldRun() {
@@ -119,5 +129,9 @@ public class QueryResponseThread extends Thread {
 
     public void setQuery(Query query) {
         this.query = query;
+    }
+
+    public boolean isDownloading() {
+        return isDownloading;
     }
 }

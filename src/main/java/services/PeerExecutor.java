@@ -76,6 +76,7 @@ public class PeerExecutor {
             System.out.println("Os argumento são: ");
             System.out.println("(1) porta do peer local");
             System.out.println("(2) lista de ip1:porta1,ip2:porta2 separados por vírgulas dos peers remotos");
+            System.exit(0);
         }
 
         Integer localPeerPort = Integer.valueOf(args[0]);

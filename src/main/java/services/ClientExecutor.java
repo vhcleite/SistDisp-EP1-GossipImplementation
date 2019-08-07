@@ -17,8 +17,8 @@ import threads.QueryResponseThread;
 
 public class ClientExecutor {
 
-    public final static int TTL = 2;
-    public final static long TIMEOUT = 50 * 1000;
+//    public final static int TTL = 2;
+//    public final static long TIMEOUT = 50 * 1000;
     public final static int LOCAL_PORT = 3001;
     public final static String LOCAL_IP = "127.0.0.1";
     private static final long DELAY = 500;
@@ -29,14 +29,16 @@ public class ClientExecutor {
 
         String fileName;
         BufferedReader ob = new BufferedReader(new InputStreamReader(System.in));
-        while (!(fileName = getInputFromUser(ob)).equals("exit")) {
+        while (!(fileName = getInputFromUser(ob, "Enter a filename to query or type exit to leave: ")).equals("exit")) {
+            int TTL = Integer.valueOf(getInputFromUser(ob, "With TTL: "));
+            long TIMEOUT = Long.valueOf(getInputFromUser(ob, "And timeout in seconds: ")) * 1000;
 
             Query query = new Query(new ClientId(new Address(LOCAL_IP, LOCAL_PORT)), fileName, TTL);
 
             Address address = getRandomAddress();
-	    System.out.println("Procurando por: " + fileName + ", no peer " + address);
+            System.out.println("Procurando por: " + fileName + ", no peer " + address);
             sendQuerytoAddress(query, address);
-		
+
             ServerSocket serverSocket = new ServerSocket(LOCAL_PORT);
             QueryResponseThread queryReponseThread = new QueryResponseThread(serverSocket, query);
             queryReponseThread.start();
@@ -48,7 +50,7 @@ public class ClientExecutor {
                 if (queryReponseThread.isDownloadComplete()) {
                     System.out.println(String.format("Download de %s completo", fileName));
                     break;
-                } else if (System.currentTimeMillis() - start >= TIMEOUT) {
+                } else if (!queryReponseThread.isDownloadComplete() &&!queryReponseThread.isDownloading() && System.currentTimeMillis() - start >= TIMEOUT) {
                     System.out.println(String.format("Timeout para downlaod de %s", fileName));
                     break;
                 }
@@ -75,9 +77,9 @@ public class ClientExecutor {
         return PeerAddressesList.getAddress(LotteryService.getRandomInt(PeerAddressesList.getSize()));
     }
 
-    private static String getInputFromUser(BufferedReader ob) {
+    private static String getInputFromUser(BufferedReader ob, String message) {
         try {
-            System.out.print("Enter a filename: ");
+            System.out.print(message);
             return ob.readLine();
         } catch (IOException e) {
             e.printStackTrace();

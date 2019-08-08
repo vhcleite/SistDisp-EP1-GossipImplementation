@@ -47,7 +47,9 @@ public class NeighborsMetadataSenderThread extends AbstractThread {
                 // sorteia um peer para pegar os metadados
                 try {
                     semaphore.acquire();
-                    recordToSend = peerRecords.get(LotteryService.getRandomInt(peerRecords.size()));
+                    if(!peerRecords.isEmpty()) {
+                        recordToSend = peerRecords.get(LotteryService.getRandomInt(peerRecords.size()));
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }finally {

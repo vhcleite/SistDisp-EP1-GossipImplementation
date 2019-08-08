@@ -3,6 +3,7 @@ package threads;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import model.Address;
 import model.Message;
@@ -19,15 +20,17 @@ public class NeighborsMetadataSenderThread extends AbstractThread {
     private List<PeerRecord> peerRecords;
     private List<Address> peerAddresses;
     private DatagramSocket socket;
+    private Semaphore semaphore;
 
     MessageHandler messageHandler = new MessageHandler();
 
     public NeighborsMetadataSenderThread(Peer iPeer, DatagramSocket socket, ArrayList<PeerRecord> peerRecords,
-            List<Address> peersAddresses) {
+                                         List<Address> peersAddresses, Semaphore semaphore) {
         super(iPeer);
         this.peerRecords = peerRecords;
         this.peerAddresses = peersAddresses;
         this.socket = socket;
+        this.semaphore = semaphore;
     }
 
     @Override
@@ -42,7 +45,15 @@ public class NeighborsMetadataSenderThread extends AbstractThread {
                 addressToSend = peerAddresses.get(LotteryService.getRandomInt(peerAddresses.size()));
 
                 // sorteia um peer para pegar os metadados
-                recordToSend = peerRecords.get(LotteryService.getRandomInt(peerRecords.size()));
+                try {
+                    semaphore.acquire();
+                    recordToSend = peerRecords.get(LotteryService.getRandomInt(peerRecords.size()));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }finally {
+                    semaphore.release();
+                }
+
             } while (addressToSend.equals(recordToSend.getPeer().getAddress()) //
                     || addressToSend.equals(getPeer().getAddress()) //
                     || (recordToSend.getPeer().getMetadata() == null));

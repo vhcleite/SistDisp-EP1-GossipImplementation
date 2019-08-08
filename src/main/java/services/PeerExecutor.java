@@ -7,6 +7,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import model.Address;
 import model.Peer;
@@ -22,6 +23,7 @@ import static resources.PeerAddressesList.*;
 
 public class PeerExecutor {
 
+    public static Semaphore semaphore;
     public String localHost;
     public DatagramSocket socket;
     public List<Address> peerAddresses;
@@ -34,6 +36,7 @@ public class PeerExecutor {
         initSocket(localAddr);
         initPeer(localAddr);
         initPeerRecords(remotePeersList);
+        this.semaphore = new Semaphore(1);
     }
 
     private void initPeer(Address localAddr) {
@@ -100,11 +103,12 @@ public class PeerExecutor {
         // Thread responsavel por enviar os metadados de peers vizinhos para outros
         // peers vizinhos
         NeighborsMetadataSenderThread neighborsMetadataSenderThread = new NeighborsMetadataSenderThread(client.iPeer,
-                client.socket, client.peerRecords, client.peerAddresses);
+                client.socket, client.peerRecords, client.peerAddresses, semaphore);
         neighborsMetadataSenderThread.start();
 
         // Thread responsavel por enviar os de peers vizinhos para os peers vizinhos
-        MetadataVerifierThread metaDataVerifierThread = new MetadataVerifierThread(client.iPeer, client.peerRecords);
+        MetadataVerifierThread metaDataVerifierThread = new MetadataVerifierThread(client.iPeer, client.peerRecords,
+                semaphore);
         metaDataVerifierThread.start();
     }
 

@@ -24,11 +24,18 @@
             </goals>
           </execution>
         </executions>
+<!--         <configuration> -->
+<!--           <mainClass>services.PeerExecutor</mainClass> -->
+<!--           <arguments> -->
+<!--             <argument>9002</argument> -->
+<!--             <argument>127.0.1.1:9000</argument> -->
+<!--           </arguments> -->
+<!--         </configuration> -->
         <configuration>
-          <mainClass>services.PeerExecutor</mainClass>
+          <mainClass>services.ClientExecutor</mainClass>
           <arguments>
-            <argument>9002</argument>
-            <argument>127.0.1.1:9000</argument>
+            <argument>127.0.1.1:3000</argument>
+            <argument>127.0.1.1:9000,127.0.1.1:9000</argument>
           </arguments>
         </configuration>
       </plugin>

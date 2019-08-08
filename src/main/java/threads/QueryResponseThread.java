@@ -36,13 +36,13 @@ public class QueryResponseThread extends Thread {
         while (getShouldRun()) {
             try {
                 Socket socket = serverSocket.accept();
-                System.out.println("Recebendo requisição para transferência de: " + socket.getInetAddress());
+                System.out.println("Recebendo requisição para transferência de: " + socket.getInetAddress() + ":"
+                        + socket.getPort());
 
                 InputStream is = socket.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
                 String peerInput = br.readLine();
-                System.out.println("peerInput: " + peerInput);
 
                 mHandler = new MessageHandler();
                 Message message = mHandler.parseMessage(peerInput);
@@ -59,7 +59,6 @@ public class QueryResponseThread extends Thread {
                         System.out.println("Consulta valida. Permitir envio de arquivo");
                         requestResponse = new Message(MessageType.SEND_REQUEST_ALLOWED, "");
                         responseDownloadRequest(out, requestResponse);
-                        System.out.println("Realizando download");
                         isDownloading = true;
                         downloadFile(is);
                         isDownloadCompleted = true;
@@ -90,7 +89,7 @@ public class QueryResponseThread extends Thread {
             bytesRead = is.read(bytearray, currentTotal, (bytearray.length - currentTotal));
             if (bytesRead >= 0) {
                 currentTotal += bytesRead;
-//                System.out.println((currentTotal/1024) + " Kbytes");
+//                System.out.println("baixado: " + (currentTotal / 1024) + " Kbytes");
                 System.out.print(".");
             }
         } while ((bytesRead > -1) && getShouldRun());

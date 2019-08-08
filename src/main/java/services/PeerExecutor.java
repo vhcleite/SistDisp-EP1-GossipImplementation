@@ -24,7 +24,6 @@ import static resources.PeerAddressesList.*;
 public class PeerExecutor {
 
     public static Semaphore semaphore;
-    public String localHost;
     public DatagramSocket socket;
     public List<Address> peerAddresses;
 
@@ -40,13 +39,8 @@ public class PeerExecutor {
     }
 
     private void initPeer(Address localAddr) {
-        try {
-            this.localHost = InetAddress.getLocalHost().getHostAddress();
-            this.iPeer = new Peer(localAddr.getIp(), localAddr.getPort());
-            new File(iPeer.getMonitoringFolderName()).mkdirs();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        this.iPeer = new Peer(localAddr.getIp(), localAddr.getPort());
+        new File(iPeer.getMonitoringFolderName()).mkdirs();
     }
 
     private void initPeerRecords(String remotePeersList) {
@@ -59,7 +53,6 @@ public class PeerExecutor {
             this.peerRecords.add(new PeerRecord(address.getIp(), address.getPort()));
         }
     }
-
 
 
     private void initSocket(Address localAddr) {

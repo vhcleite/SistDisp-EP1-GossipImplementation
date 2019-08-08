@@ -45,7 +45,7 @@ public class ClientExecutor {
 
             Address address = getRandomAddress(peerAddressesList);
             System.out.println("Procurando por: " + fileName + ", no peer " + address);
-            sendQuerytoAddress(query, address, address.getPort());
+            sendQuerytoAddress(query, address, localAddr.getPort());
 
             ServerSocket serverSocket = new ServerSocket(localAddr.getPort());
             QueryResponseThread queryReponseThread = new QueryResponseThread(serverSocket, query);

@@ -23,20 +23,17 @@ public class ClientExecutor {
 
     public static void main(String args[]) throws IOException, InterruptedException {
 
-//        if (args.length != 2) {
-//            System.out.println("Os argumento são: ");
-//            System.out.println("(1) endenco do peer local");
-//            System.out.println("(2) lista de ip1:porta1,ip2:porta2 separados por vírgulas dos peers remotos");
-//        }
-//
-//        String localAddrString = args[0];
-//        String remotePeersList = args[1];
+        if (args.length != 2) {
+            System.out.println("Os argumento são: ");
+            System.out.println("(1) endenco do peer local");
+            System.out.println("(2) lista de ip1:porta1,ip2:porta2 separados por vírgulas dos peers remotos");
+        }
 
-//        PeerAddressesList peerAddressesList = new PeerAddressesList(remotePeersList);
-//        Address localAddr = PeerAddressesList.getAddressFromString(localAddrString);
+        String localAddrString = args[0];
+        String remotePeersList = args[1];
 
-        PeerAddressesList peerAddressesList = new PeerAddressesList("127.0.1.1:9000,127.0.1.1:9000");
-        Address localAddr = PeerAddressesList.getAddressFromString("127.0.1.1:3000");
+        PeerAddressesList peerAddressesList = new PeerAddressesList(remotePeersList);
+        Address localAddr = PeerAddressesList.getAddressFromString(localAddrString);
 
         String fileName;
         BufferedReader ob = new BufferedReader(new InputStreamReader(System.in));

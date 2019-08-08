@@ -23,7 +23,7 @@ public class MetadataBuilderThread extends AbstractThread {
 
             listAllFiles(getPeer().getMonitoringFolderName());
 //            ThreadLog(getPeer().getMetadata().toString());
-
+//
             try {
                 Thread.sleep(TIMEOUT);
             } catch (InterruptedException e) {
